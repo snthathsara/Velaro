@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flow Media — Premium Short-Form Video Editing</title>
+<meta name="description" content="Flow Media builds high-retention short-form edits for creators — sharper hooks, tighter pacing, cleaner motion. Editing systems made for audience growth." />
+<link rel="icon" type="image/png" href="logo.png" />
+
+<!-- Prevent theme flash -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('flow-theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============ NAVIGATION ============ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="#home" class="brand" aria-label="Flow Media home">
+      <img src="logo.png" alt="" class="brand__mark" />
+      <span class="brand__name">Flow&nbsp;Media</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#showcase">Portfolio</a>
+      <a href="#process">Process</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--dark nav__book">Work with us</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ ANNOUNCEMENT BAR (sticky under nav) ============ -->
+<div class="announce" id="announce">
+  <div class="announce__inner">
+    <span class="announce__text announce__text--full">Limited time — save up to <b>20% off</b> all editing packages</span>
+    <span class="announce__text announce__text--short"><b>20% off</b> — ends in</span>
+    <span class="announce__timer" id="countdown" aria-label="Offer countdown">
+      <span><b id="cd-d">04</b>d</span>
+      <span><b id="cd-h">16</b>h</span>
+      <span><b id="cd-m">22</b>m</span>
+      <span><b id="cd-s">00</b>s</span>
+    </span>
+    <a href="#pricing" class="announce__cta">Claim offer <span aria-hidden="true">→</span></a>
+  </div>
+  <button class="announce__close" id="announce-close" aria-label="Dismiss announcement">✕</button>
+</div>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="#showcase">Portfolio</a>
+  <a href="#process">Process</a>
+  <a href="#testimonials">Reviews</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#faq">FAQ</a>
+  <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--accent">Work with us</a>
+</div>
+
+<main id="home">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="wrap hero__inner reveal">
+    <span class="pill">
+      <span class="pill__dot"></span> Premium content creation
+    </span>
+
+    <h1 class="hero__title">
+      <span class="hero__line">Flow Media creates</span>
+      <span class="rotator" aria-live="polite">
+        <span class="hl rotator__word is-active">high-retention</span>
+        <span class="hl rotator__word">scroll-stopping</span>
+        <span class="hl rotator__word">binge-worthy</span>
+        <span class="hl rotator__word">high-converting</span>
+      </span>
+      <span class="hero__line">short-form edits.</span>
+    </h1>
+
+    <p class="hero__sub">
+      Short-form editing for creators who want sharper hooks, tighter pacing and
+      cleaner motion — so viewers actually stay to the end.
+    </p>
+
+    <div class="hero__cta">
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--dark btn--lg magnetic">Work with us <span aria-hidden="true">→</span></a>
+      <a href="#showcase" class="btn btn--ghost btn--lg magnetic">View portfolio</a>
+    </div>
+  </div>
+
+  <!-- Fanned card deck — random portfolio frames, shuffles over time -->
+  <div class="deck reveal" id="deck"></div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>High retention</span><span class="dot">✦</span>
+    <span>Scroll-stopping hooks</span><span class="dot">✦</span>
+    <span>Motion graphics</span><span class="dot">✦</span>
+    <span>Clean sound design</span><span class="dot">✦</span>
+    <span>Caption rhythm</span><span class="dot">✦</span>
+    <span>Cinematic color</span><span class="dot">✦</span>
+    <span>High retention</span><span class="dot">✦</span>
+    <span>Scroll-stopping hooks</span><span class="dot">✦</span>
+    <span>Motion graphics</span><span class="dot">✦</span>
+    <span>Clean sound design</span><span class="dot">✦</span>
+    <span>Caption rhythm</span><span class="dot">✦</span>
+    <span>Cinematic color</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ============ TRUST / COUNTERS ============ -->
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Proof that compounds</span>
+      <h2 class="section-title">Editing systems made<br/>for audience growth.</h2>
+    </div>
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="stat__num" data-count="200" data-suffix="M+">0</div>
+        <div class="stat__label">Views generated</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num" data-count="250" data-suffix="M+">0</div>
+        <div class="stat__label">Impressions</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num" data-count="100" data-suffix="+">0</div>
+        <div class="stat__label">Videos delivered</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num" data-count="98" data-suffix="%">0</div>
+        <div class="stat__label">Client satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE (single video section) ============ -->
+<section class="section" id="showcase">
+  <div class="wrap">
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow">Selected edits</span>
+        <h2 class="section-title">One showcase.<br/>Eleven proof points.</h2>
+      </div>
+      <p class="section-lead">Vertical edits built for hooks, pacing, retention and creator growth. Tap any tile to watch the full cut.</p>
+    </div>
+
+    <div class="carousel reveal">
+      <button class="carousel__arrow carousel__arrow--prev" id="car-prev" aria-label="Scroll to previous edits">‹</button>
+      <div class="showcase-grid" id="showcase-grid">
+        <!-- cards injected by JS -->
+      </div>
+      <button class="carousel__arrow carousel__arrow--next" id="car-next" aria-label="Scroll to more edits">›</button>
+    </div>
+    <p class="carousel__hint" aria-hidden="true">Drag or scroll to explore all 11 edits</p>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="section section--alt" id="process">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Process</span>
+      <h2 class="section-title">A retention workflow,<br/>not just edits.</h2>
+    </div>
+
+    <div class="bento reveal">
+      <article class="bento__card">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h3>Footage audit</h3>
+        <p>We review your raw footage, identify the strongest angle and restructure pacing before the timeline gets touched.</p>
+      </article>
+
+      <article class="bento__card bento__card--dark">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13z"/></svg></div>
+        <h3>Retention hooks</h3>
+        <p>Motion graphics, zooms, captions, visual hooks and pattern interrupts built around the first three seconds.</p>
+      </article>
+
+      <article class="bento__card">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6M8 5v14M12 8v8M16 4v16M20 10v4"/></svg></div>
+        <h3>Sound design</h3>
+        <p>Whooshes, bass hits, transitions and audio mixing — the layer most viewers feel but never notice.</p>
+      </article>
+
+      <article class="bento__card">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Color grading</h3>
+        <p>A clean, cinematic look that keeps your brand consistent without crushing your natural style.</p>
+      </article>
+
+      <article class="bento__card">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></div>
+        <h3>Feedback &amp; revisions</h3>
+        <p>Unlimited revisions until the cut nails your pacing and audience expectations.</p>
+      </article>
+
+      <article class="bento__card bento__card--accent">
+        <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></div>
+        <h3>Delivery</h3>
+        <p>4K export, optimized upload and thumbnail-ready frames, prepared for publishing.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLIENT RESULTS (black) ============ -->
+<section class="results">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow eyebrow--light">Client results</span>
+      <h2 class="section-title section-title--light">Results that move<br/>beyond vanity metrics.</h2>
+    </div>
+    <div class="results__row reveal">
+      <div class="result">
+        <div class="result__num" data-count="380" data-prefix="+" data-suffix="%">0</div>
+        <div class="result__label">Average watch time</div>
+      </div>
+      <div class="result result--hi">
+        <div class="result__num" data-count="200" data-prefix="+" data-suffix="M">0</div>
+        <div class="result__label">Combined views</div>
+      </div>
+      <div class="result">
+        <div class="result__num" data-count="210" data-prefix="+" data-suffix="%">0</div>
+        <div class="result__label">Average engagement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Testimonials</span>
+      <h2 class="section-title">Creators feel the<br/>difference in the edit.</h2>
+    </div>
+
+  </div>
+  <div class="tmarquee reveal" id="quotes"><!-- injected --></div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="section section--alt" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="section-title">Packages for creators<br/>who publish consistently.</h2>
+    </div>
+
+    <div class="pricing reveal">
+      <article class="price-card">
+        <div class="price-card__head">
+          <h3>Growth Pack</h3>
+          <p class="price-card__meta">15 videos · 1 video every 2 days</p>
+          <span class="price-card__save">20% off applied</span>
+        </div>
+        <div class="price-card__price"><span class="cur">$</span>170<span class="price-card__old">$213</span></div>
+        <ul class="price-card__feats">
+          <li>Smooth captions</li>
+          <li>High-retention editing</li>
+          <li>Viral animations</li>
+          <li>Professional color grading</li>
+          <li>Motion graphics</li>
+        </ul>
+        <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--ghost btn--block">Get started</a>
+      </article>
+
+      <article class="price-card price-card--featured">
+        <span class="price-card__badge">Most popular</span>
+        <div class="price-card__head">
+          <h3>Creator Pack</h3>
+          <p class="price-card__meta">30 videos · 1 video per day</p>
+          <span class="price-card__save">20% off applied</span>
+        </div>
+        <div class="price-card__price"><span class="cur">$</span>300<span class="price-card__old">$375</span></div>
+        <ul class="price-card__feats">
+          <li>Everything in Growth Pack</li>
+          <li>Priority delivery</li>
+          <li>Unlimited revisions</li>
+          <li>1 free video</li>
+        </ul>
+        <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--accent btn--block">Get started</a>
+      </article>
+
+      <article class="price-card">
+        <div class="price-card__head">
+          <h3>Monster Pack</h3>
+          <p class="price-card__meta">40–60 videos · fast delivery</p>
+          <span class="price-card__save">20% off applied</span>
+        </div>
+        <div class="price-card__price"><span class="cur">$</span>400<span class="price-card__range">–650</span><span class="price-card__old">$500–810</span></div>
+        <ul class="price-card__feats">
+          <li>Everything included</li>
+          <li>Dedicated support</li>
+          <li>2 free videos</li>
+          <li>Highest priority queue</li>
+        </ul>
+        <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--ghost btn--block">Get started</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="wrap faq">
+    <div class="section-head section-head--left reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2 class="section-title">Questions before<br/>we start cutting?</h2>
+      <p class="section-lead">Still unsure? Reach out and we'll get back to you within a few hours.</p>
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--dark">Contact us</a>
+    </div>
+
+    <div class="accordion reveal" id="accordion">
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">How long does delivery take?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Most packages follow a consistent publishing rhythm — from every two days to daily delivery depending on the plan. Rush turnarounds are available on request.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">How many revisions are included?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Revisions are included until the edit feels right for your brand and audience. The Creator and Monster packs come with unlimited revisions.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Do you edit Shorts?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Yes — short-form vertical content is our specialty. YouTube Shorts, Reels and TikTok are all part of the standard workflow.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Can I send Google Drive links?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Absolutely. Google Drive, Dropbox or Frame.io all work. Just share the footage and any references and we'll take it from there.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Do you create subtitles and motion graphics?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Yes. Clean animated captions, custom motion graphics, zooms and visual hooks are included across the packages.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Do you edit podcasts?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>We do. We cut long-form podcasts into scroll-stopping clips, and can handle full-episode edits with chapters and highlights.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Do you provide thumbnails?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Every delivery is thumbnail-ready with clean export frames, and dedicated thumbnail design can be added to any package.</p></div>
+      </div>
+      <div class="acc">
+        <button class="acc__q" aria-expanded="false">Can I request custom motion graphics?<span class="acc__ico" aria-hidden="true">+</span></button>
+        <div class="acc__a"><p>Definitely. Custom lower-thirds, animated overlays and branded transitions can be built to match your channel's identity.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta" id="contact">
+  <div class="grid-bg grid-bg--dark" aria-hidden="true"></div>
+  <div class="wrap cta__inner reveal">
+    <h2 class="cta__title">Ready to make videos<br/>people <span class="hl">actually watch?</span></h2>
+    <p class="cta__sub">Let's create edits that keep viewers watching and help grow your audience.</p>
+    <div class="cta__btns">
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener" class="btn btn--accent btn--lg magnetic">Work with us <span aria-hidden="true">→</span></a>
+      <a href="#pricing" class="btn btn--ghost-light btn--lg magnetic">View pricing</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div class="footer__brand">
+      <a href="#home" class="brand">
+        <img src="logo.png" alt="" class="brand__mark" />
+        <span class="brand__name">Flow&nbsp;Media</span>
+      </a>
+      <p>Premium short-form video editing for creators who want tighter pacing, sharper hooks and edits that actually grow their audience.</p>
+    </div>
+
+    <nav class="footer__col" aria-label="Footer">
+      <h4>Navigate</h4>
+      <a href="#showcase">Portfolio</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#process">Process</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener">Contact</a>
+    </nav>
+
+    <div class="footer__col">
+      <h4>Connect</h4>
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener">Discord</a>
+      <a href="#">Instagram</a>
+      <a href="#">YouTube</a>
+      <a href="https://discord.com/users/1339213343784964157" target="_blank" rel="noopener">Message us</a>
+    </div>
+  </div>
+  <div class="wrap footer__bar">
+    <span>© 2026 Flow Media. All rights reserved.</span>
+    <span>High-retention short-form editing.</span>
+  </div>
+</footer>
+
+<!-- ============ VIDEO MODAL ============ -->
+<div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__box">
+    <button class="modal__close" data-close aria-label="Close video">✕</button>
+    <div class="modal__frame" id="modal-frame"></div>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

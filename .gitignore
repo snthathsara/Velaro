@@ -1,0 +1,13 @@
+# Design reference screenshots (not part of the site)
+screencapture-*.png
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependencies (none currently, but just in case)
+node_modules/
+
+# Local Claude Code settings
+.claude/settings.local.json
