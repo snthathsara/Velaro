@@ -5,15 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Flow Media — Premium Short-Form Video Editing</title>
 <meta name="description" content="Flow Media builds high-retention short-form edits for creators — sharper hooks, tighter pacing, cleaner motion. Editing systems made for audience growth." />
-<link rel="icon" type="image/png" href="logo.png" />
+<link rel="icon" type="image/png" href="logo.png" id="site-favicon" />
 
-<!-- Prevent theme flash -->
+<!-- Prevent theme & accent flash -->
 <script>
   (function () {
     try {
       var t = localStorage.getItem('flow-theme');
       if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', t);
+      var accent = localStorage.getItem('flow_accent_color');
+      if (accent) {
+        document.documentElement.style.setProperty('--accent', accent);
+        document.documentElement.style.setProperty('--glow', accent + '55');
+      }
     } catch (e) {}
   })();
 </script>
@@ -89,9 +94,10 @@
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="grid-bg" aria-hidden="true"></div>
-  <div class="wrap hero__inner reveal">
-    <span class="pill">
-      <span class="pill__dot"></span> Premium content creation
+  <div class="wrap hero__inner hero__inner--load">
+    <span class="pill pill--status is-available" id="availability-pill" aria-label="Current studio availability">
+      <span class="pill__dot"></span>
+      <span class="pill__text" id="availability-text">Available for new projects</span>
     </span>
 
     <h1 class="hero__title">
@@ -145,7 +151,7 @@
       <span class="eyebrow">Proof that compounds</span>
       <h2 class="section-title">Editing systems made<br/>for audience growth.</h2>
     </div>
-    <div class="stats reveal">
+    <div class="stats reveal-stagger">
       <div class="stat">
         <div class="stat__num" data-count="200" data-suffix="M+">0</div>
         <div class="stat__label">Views generated</div>
@@ -184,7 +190,7 @@
       </div>
       <button class="carousel__arrow carousel__arrow--next" id="car-next" aria-label="Scroll to more edits">›</button>
     </div>
-    <p class="carousel__hint" aria-hidden="true">Drag or scroll to explore all 11 edits</p>
+    <p class="carousel__hint" aria-hidden="true">Use the arrows or scroll to browse all 11 edits</p>
   </div>
 </section>
 
@@ -196,7 +202,7 @@
       <h2 class="section-title">A retention workflow,<br/>not just edits.</h2>
     </div>
 
-    <div class="bento reveal">
+    <div class="bento reveal-stagger">
       <article class="bento__card">
         <div class="bento__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
         <h3>Footage audit</h3>
@@ -243,7 +249,7 @@
       <span class="eyebrow eyebrow--light">Client results</span>
       <h2 class="section-title section-title--light">Results that move<br/>beyond vanity metrics.</h2>
     </div>
-    <div class="results__row reveal">
+    <div class="results__row reveal-stagger">
       <div class="result">
         <div class="result__num" data-count="380" data-prefix="+" data-suffix="%">0</div>
         <div class="result__label">Average watch time</div>
@@ -280,7 +286,7 @@
       <h2 class="section-title">Packages for creators<br/>who publish consistently.</h2>
     </div>
 
-    <div class="pricing reveal">
+    <div class="pricing reveal-stagger">
       <article class="price-card">
         <div class="price-card__head">
           <h3>Growth Pack</h3>

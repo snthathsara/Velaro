@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flow Media — Studio Control Portal</title>
+<link rel="icon" type="image/png" href="logo.png" id="admin-favicon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --panel: #121215;
+    --card: #18181c;
+    --card-hover: #222228;
+    --ink: #f5f5f7;
+    --ink-dim: #8e8e93;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --accent: #d8ff1f;
+    --accent-hover: #c8f400;
+    --glow: rgba(216, 255, 31, 0.25);
+    --radius: 20px;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter Tight", system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grid overlay */
+  .grid-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 40%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 820px;
+    margin: 0 auto; padding: 36px 20px 80px;
+  }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: "Archivo", sans-serif; font-weight: 800; font-size: 20px;
+  }
+  .brand img { width: 32px; height: 32px; object-fit: contain; }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .nav-btn {
+    font-size: 13.5px; font-weight: 600; color: var(--ink-dim);
+    text-decoration: none; padding: 8px 16px; border-radius: 100px;
+    border: 1px solid var(--border); background: var(--panel);
+    transition: all .2s; cursor: pointer;
+  }
+  .nav-btn:hover { color: #fff; border-color: var(--border-strong); background: var(--card); }
+
+  /* Auth Card & PIN Input Animations */
+  .auth-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 38px 32px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transition: transform .35s var(--ease), border-color .3s, box-shadow .3s, opacity .35s;
+    text-align: center;
+  }
+  .auth-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    display: grid; place-items: center; font-size: 24px;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.03);
+    transition: transform .4s var(--ease), border-color .3s;
+  }
+  .auth-card:hover .auth-icon { transform: scale(1.08) rotate(-6deg); border-color: var(--accent); }
+  .auth-card.is-shaking {
+    animation: shakeAuth .45s var(--ease);
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+  }
+  .auth-card.is-success {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--glow) !important;
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  @keyframes shakeAuth {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+  }
+  .pin-field-wrapper {
+    position: relative; max-width: 280px; margin: 0 auto 18px;
+  }
+  .pin-input-field {
+    width: 100%; padding: 14px 16px; border-radius: 14px;
+    background: var(--card); border: 1.5px solid var(--border);
+    color: #fff; font-size: 24px; font-family: monospace, sans-serif;
+    text-align: center; letter-spacing: 0.35em;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .pin-input-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--glow);
+  }
+  .auth-err-msg {
+    display: none; color: #ef4444; font-size: 13px; font-weight: 600;
+    margin: -8px 0 16px;
+  }
+  .auth-err-msg.is-show { display: block; animation: fadeIn .2s var(--ease); }
+
+  .main-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .auth-title {
+    font-family: "Archivo", sans-serif; font-size: 24px; font-weight: 800;
+    margin: 0 0 8px; letter-spacing: -0.03em;
+  }
+  .auth-sub { color: var(--ink-dim); font-size: 14.5px; margin: 0 0 24px; line-height: 1.5; }
+
+  /* Tabs Bar */
+  .tabs-bar {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding-bottom: 12px; margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .tabs-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
+    color: var(--ink-dim); font-size: 14px; font-weight: 600;
+    padding: 10px 18px; border-radius: 100px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; transition: all .2s;
+  }
+  .tab-btn:hover { color: #fff; border-color: var(--border-strong); background: var(--card-hover); }
+  .tab-btn.is-active {
+    background: var(--accent); color: #0a0a0c;
+    border-color: transparent; box-shadow: 0 4px 16px var(--glow);
+  }
+
+  /* Tab Panes */
+  .tab-pane { display: none; }
+  .tab-pane.is-active { display: block; animation: fadeIn .3s var(--ease); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Inputs & Forms */
+  .input-group { margin-bottom: 20px; }
+  .input-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .input-field {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    color: #fff; font-size: 15.5px; font-family: inherit;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+
+  .btn {
+    padding: 14px 22px; border-radius: 12px; border: 0;
+    font-family: "Inter Tight", sans-serif; font-weight: 700; font-size: 15px;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .2s, background .2s, box-shadow .2s; text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--accent); color: #0a0a0c;
+    box-shadow: 0 8px 24px var(--glow); width: 100%;
+  }
+  .btn--primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 12px 30px var(--glow); }
+  .btn--secondary {
+    background: var(--card); color: #fff; border: 1px solid var(--border);
+  }
+  .btn--secondary:hover { background: var(--card-hover); border-color: var(--border-strong); }
+  .btn--danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+  .btn--danger:hover { background: #ef4444; color: #fff; }
+
+  /* Status Option Cards */
+  .status-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+  .status-opt {
+    position: relative; background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 18px 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all .25s var(--ease);
+  }
+  .status-opt:hover { background: var(--card-hover); border-color: var(--border-strong); }
+  .status-opt.is-selected {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, var(--card));
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .status-info { display: flex; align-items: center; gap: 14px; }
+  .status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .dot--avail { background: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25); }
+  .dot--limited { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25); }
+  .dot--busy { background: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25); }
+  .status-label { font-size: 16px; font-weight: 700; }
+  .status-desc { font-size: 13px; color: var(--ink-dim); margin-top: 2px; }
+  .status-radio {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border-strong); display: grid; place-items: center;
+  }
+  .status-opt.is-selected .status-radio { border-color: var(--accent); background: var(--accent); }
+  .status-opt.is-selected .status-radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #0a0a0c; }
+
+  /* Live Preview Box */
+  .preview-box {
+    background: #000; border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px 20px; text-align: center;
+    margin-bottom: 24px;
+  }
+  .preview-title {
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ink-dim); margin-bottom: 16px;
+  }
+
+  /* Website Pill Simulation */
+  .pill-preview {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 13px; font-weight: 600; color: #f5f5f7;
+    background: #141416; border: 1px solid rgba(255,255,255,0.12);
+    padding: 8px 18px; border-radius: 100px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+    transition: all .3s var(--ease);
+  }
+  .pill-preview.is-available { background: #18181c; border-color: rgba(255,255,255,0.14); color: #fff; }
+  .pill-preview.is-available .pill-preview__dot { background: #10b981; box-shadow: 0 0 0 4px rgba(16,185,129,0.25); }
+  .pill-preview.is-limited { background: #18181c; border-color: rgba(245, 158, 11, 0.3); color: #fff; }
+  .pill-preview.is-limited .pill-preview__dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25); }
+  .pill-preview.is-busy { background: #141416; border-color: rgba(255,255,255,0.14); color: #f3f3f5; }
+  .pill-preview.is-busy .pill-preview__dot { background: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3); }
+  .pill-preview__dot { width: 7px; height: 7px; border-radius: 50%; animation: dotPulse 2.4s infinite ease-in-out; }
+  @keyframes dotPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: .75; } }
+
+  /* Palette Preset Swatches */
+  .presets-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px;
+  }
+  .swatch-btn {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 12px 10px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .swatch-btn:hover { background: var(--card-hover); border-color: var(--border-strong); }
+  .swatch-btn.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .swatch-color {
+    width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .swatch-name { font-size: 12.5px; font-weight: 600; color: #fff; }
+
+  /* Custom Color Picker Row */
+  .color-picker-row {
+    display: flex; gap: 12px; align-items: center; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 8px 14px;
+    margin-bottom: 24px;
+  }
+  .color-picker-row input[type="color"] {
+    width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; border-radius: 8px;
+  }
+
+  /* Logo Upload Box */
+  .upload-dropzone {
+    border: 2px dashed var(--border-strong); border-radius: 16px;
+    padding: 32px 20px; text-align: center; cursor: pointer;
+    background: var(--card); transition: all .2s; margin-bottom: 18px;
+  }
+  .upload-dropzone:hover { border-color: var(--accent); background: var(--card-hover); }
+  .logo-preview-img { max-height: 80px; max-width: 220px; object-fit: contain; margin: 12px auto; display: block; }
+
+  /* Video & Review Cards in Admin */
+  .list-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .item-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    transition: border-color .2s;
+  }
+  .item-card:hover { border-color: var(--border-strong); }
+  .item-thumb {
+    width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: #000; flex-shrink: 0;
+  }
+  .item-body { flex: 1; min-width: 0; }
+  .item-title { font-size: 15px; font-weight: 700; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-sub { font-size: 13px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--accent); color: #0a0a0c; font-weight: 800; font-size: 14.5px;
+    padding: 12px 28px; border-radius: 100px; box-shadow: 0 10px 30px var(--glow);
+    opacity: 0; pointer-events: none; transition: all .35s var(--ease); z-index: 100;
+  }
+  .toast.is-show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* Modal Dialog for Add/Edit */
+  .admin-modal {
+    position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .admin-modal.is-open { display: flex; }
+  .admin-modal__card {
+    background: var(--panel); border: 1px solid var(--border-strong);
+    border-radius: var(--radius); padding: 30px; width: 100%; max-width: 520px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 24px 16px 60px; }
+    .item-card { flex-direction: column; align-items: flex-start; }
+    .item-actions { width: 100%; justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg" aria-hidden="true"></div>
+
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <img src="logo.png" alt="" id="admin-brand-logo" />
+      <span>Studio Control</span>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="nav-btn">← Live Site</a>
+      <button id="lock-btn" class="nav-btn" style="display: none;">Lock 🔒</button>
+    </div>
+  </header>
+
+  <!-- Step 1: PIN Unlock -->
+  <section class="auth-card" id="auth-section">
+    <div class="auth-icon">🔒</div>
+    <h1 class="auth-title">Studio Admin Access</h1>
+    <p class="auth-sub">Enter your security PIN to manage availability, videos, reviews, colors, and branding.</p>
+
+    <form id="auth-form">
+      <div class="pin-field-wrapper">
+        <label class="input-label" for="pin-input" style="justify-content: center; margin-bottom: 12px;">Security PIN</label>
+        <input type="password" id="pin-input" class="pin-input-field" placeholder="••••" maxlength="10" autofocus autocomplete="current-password" />
+      </div>
+      <div class="auth-err-msg" id="auth-err-msg">Incorrect PIN. Please try again.</div>
+      <button type="submit" class="btn btn--primary">Unlock Studio Control →</button>
+    </form>
+  </section>
+
+  <!-- Step 2: Main Studio CMS Dashboard -->
+  <section class="main-card" id="dashboard-section" style="display: none;">
+    <!-- Navigation Tabs -->
+    <nav class="tabs-bar" aria-label="Admin Sections">
+      <button class="tab-btn is-active" data-tab="status">🟢 Availability</button>
+      <button class="tab-btn" data-tab="palette">🎨 Colors</button>
+      <button class="tab-btn" data-tab="branding">🖼️ Logo</button>
+      <button class="tab-btn" data-tab="videos">🎬 Videos</button>
+      <button class="tab-btn" data-tab="reviews">💬 Reviews</button>
+      <button class="tab-btn" data-tab="settings">⚙️ Cloud Sync</button>
+    </nav>
+
+    <!-- ================= TAB 1: AVAILABILITY STATUS ================= -->
+    <div class="tab-pane is-active" id="tab-status">
+      <div style="margin-bottom: 20px;">
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Availability Badge</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Update your real-time client availability displayed in the hero section.</p>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-opt is-selected" data-state="available" data-default-text="Available for new projects">
+          <div class="status-info">
+            <span class="status-dot dot--avail"></span>
+            <div>
+              <div class="status-label">Available</div>
+              <div class="status-desc">Ready for new video editing clients</div>
+            </div>
+          </div>
+          <div class="status-radio"></div>
+        </div>
+
+        <div class="status-opt" data-state="limited" data-default-text="1 Spot Remaining">
+          <div class="status-info">
+            <span class="status-dot dot--limited"></span>
+            <div>
+              <div class="status-label">Limited Slots</div>
+              <div class="status-desc">Only 1–2 project slots remaining</div>
+            </div>
+          </div>
+          <div class="status-radio"></div>
+        </div>
+
+        <div class="status-opt" data-state="busy" data-default-text="Completely Booked">
+          <div class="status-info">
+            <span class="status-dot dot--busy"></span>
+            <div>
+              <div class="status-label">Completely Booked</div>
+              <div class="status-desc">Waitlist only / not taking clients right now</div>
+            </div>
+          </div>
+          <div class="status-radio"></div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="custom-status-text">Badge Display Text</label>
+        <input type="text" id="custom-status-text" class="input-field" value="Available for new projects" />
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-title">Live Website Badge Preview</div>
+        <div class="pill-preview is-available" id="preview-pill">
+          <span class="pill-preview__dot"></span>
+          <span id="preview-pill-text">Available for new projects</span>
+        </div>
+      </div>
+
+      <button class="btn btn--primary js-save-btn">Publish Status Changes 🚀</button>
+    </div>
+
+    <!-- ================= TAB 2: COLOR PALETTE ================= -->
+    <div class="tab-pane" id="tab-palette">
+      <div style="margin-bottom: 20px;">
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Brand Color Palette</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Customize the accent color across all buttons, highlights, badges, and glows.</p>
+      </div>
+
+      <div class="input-label">Curated Color Presets</div>
+      <div class="presets-grid">
+        <button class="swatch-btn is-active" data-color="#d8ff1f">
+          <span class="swatch-color" style="background: #d8ff1f;"></span>
+          <span class="swatch-name">Neon Lime</span>
+        </button>
+        <button class="swatch-btn" data-color="#00f0ff">
+          <span class="swatch-color" style="background: #00f0ff;"></span>
+          <span class="swatch-name">Electric Cyan</span>
+        </button>
+        <button class="swatch-btn" data-color="#ff5500">
+          <span class="swatch-color" style="background: #ff5500;"></span>
+          <span class="swatch-name">Hyper Orange</span>
+        </button>
+        <button class="swatch-btn" data-color="#a855f7">
+          <span class="swatch-color" style="background: #a855f7;"></span>
+          <span class="swatch-name">Digital Violet</span>
+        </button>
+        <button class="swatch-btn" data-color="#ffd000">
+          <span class="swatch-color" style="background: #ffd000;"></span>
+          <span class="swatch-name">Solar Gold</span>
+        </button>
+        <button class="swatch-btn" data-color="#10b981">
+          <span class="swatch-color" style="background: #10b981;"></span>
+          <span class="swatch-name">Emerald Mint</span>
+        </button>
+      </div>
+
+      <div class="input-label">Or Pick Custom Hex Color</div>
+      <div class="color-picker-row">
+        <input type="color" id="palette-picker" value="#d8ff1f" />
+        <input type="text" id="palette-hex" class="input-field" value="#d8ff1f" placeholder="#d8ff1f" style="margin: 0;" />
+        <button class="btn btn--secondary" id="reset-color-btn" style="white-space: nowrap;">Reset Default</button>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-title">Color Accent Live Preview</div>
+        <div style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <span class="btn btn--primary" id="preview-color-btn" style="width: auto; pointer-events: none;">Work with us →</span>
+          <span style="font-size: 15px; font-weight: 700; color: #fff;">Flow Media <span id="preview-hl" style="background: var(--accent); color: #0a0a0c; padding: 2px 8px; border-radius: 6px;">edits</span></span>
+        </div>
+      </div>
+
+      <button class="btn btn--primary js-save-btn">Apply Color Palette 🚀</button>
+    </div>
+
+    <!-- ================= TAB 3: BRANDING & LOGO ================= -->
+    <div class="tab-pane" id="tab-branding">
+      <div style="margin-bottom: 20px;">
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Branding & Logo</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Upload a new studio logo or provide an image link. It updates the header and footer.</p>
+      </div>
+
+      <div class="upload-dropzone" id="logo-dropzone">
+        <input type="file" id="logo-file-input" accept="image/*" style="display: none;" />
+        <div style="font-size: 32px; margin-bottom: 8px;">📁</div>
+        <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">Click to upload new logo image</div>
+        <div style="font-size: 13px; color: var(--ink-dim);">Supports PNG, JPG, SVG, WebP (Transparent recommended)</div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="logo-url-input">Or Enter Logo Image URL</label>
+        <input type="url" id="logo-url-input" class="input-field" placeholder="https://example.com/logo.png" />
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-title">Current Logo Preview</div>
+        <img src="logo.png" alt="Logo Preview" id="logo-preview-img" class="logo-preview-img" />
+        <button class="btn btn--secondary" id="reset-logo-btn" style="margin-top: 12px; font-size: 13px;">Reset to Default Logo</button>
+      </div>
+
+      <button class="btn btn--primary js-save-btn">Save Branding Changes 🚀</button>
+    </div>
+
+    <!-- ================= TAB 4: PORTFOLIO VIDEOS ================= -->
+    <div class="tab-pane" id="tab-videos">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 class="auth-title" style="font-size: 22px; margin: 0;">Showcase Videos</h2>
+          <p class="auth-sub" style="margin: 4px 0 0;">Add, edit, or remove YouTube edits from the portfolio carousel and hero deck.</p>
+        </div>
+        <button class="btn btn--secondary" id="add-video-btn">+ Add Video</button>
+      </div>
+
+      <div class="list-stack" id="videos-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn--primary js-save-btn">Save All Videos 🚀</button>
+        <button class="btn btn--secondary" id="reset-videos-btn" style="white-space: nowrap;">Reset 11 Defaults</button>
+      </div>
+    </div>
+
+    <!-- ================= TAB 5: TESTIMONIALS ================= -->
+    <div class="tab-pane" id="tab-reviews">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 class="auth-title" style="font-size: 22px; margin: 0;">Creator Reviews</h2>
+          <p class="auth-sub" style="margin: 4px 0 0;">Customize client testimonials shown in the infinite marquee.</p>
+        </div>
+        <button class="btn btn--secondary" id="add-review-btn">+ Add Review</button>
+      </div>
+
+      <div class="list-stack" id="reviews-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn--primary js-save-btn">Save All Reviews 🚀</button>
+        <button class="btn btn--secondary" id="reset-reviews-btn" style="white-space: nowrap;">Reset 8 Defaults</button>
+      </div>
+    </div>
+
+    <!-- ================= TAB 6: CLOUD SYNC & SETTINGS ================= -->
+    <div class="tab-pane" id="tab-settings">
+      <div style="margin-bottom: 20px;">
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Cloud Realtime Sync & PIN</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Configure free realtime cloud storage and change your security PIN.</p>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="custom-pin-input">Change Security PIN</label>
+        <input type="password" id="custom-pin-input" class="input-field" placeholder="Enter new 4-digit PIN" />
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="cloud-url-input">Free Firebase / JSONBin Endpoint URL (Optional)</label>
+        <input type="url" id="cloud-url-input" class="input-field" placeholder="https://your-project.firebaseio.com/flow_data.json" />
+        <p style="font-size: 13px; color: var(--ink-dim); margin: 6px 0 0;">Entering a cloud URL lets you edit the site from your phone and update it worldwide in under 1 second without redeploying.</p>
+      </div>
+
+      <button class="btn btn--primary js-save-btn">Save Settings 🚀</button>
+    </div>
+  </section>
+</div>
+
+<!-- Add / Edit Video Modal -->
+<div class="admin-modal" id="video-modal">
+  <div class="admin-modal__card">
+    <h3 class="auth-title" id="video-modal-title" style="font-size: 20px;">Add Portfolio Video</h3>
+    <form id="video-form">
+      <input type="hidden" id="v-index" value="-1" />
+      <div class="input-group">
+        <label class="input-label" for="v-id">YouTube Video ID or Full Link</label>
+        <input type="text" id="v-id" class="input-field" placeholder="e.g. 8-21_9lF67E or https://youtu.be/8-21_9lF67E" required />
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="v-title">Video Title / Description</label>
+        <input type="text" id="v-title" class="input-field" placeholder="e.g. Gaming hook edit" required />
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="v-tag">Category Tag</label>
+        <input type="text" id="v-tag" class="input-field" placeholder="e.g. Gaming, Business, Talking Head" required />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn--secondary" id="close-video-modal">Cancel</button>
+        <button type="submit" class="btn btn--primary" style="width: auto;">Save Video</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add / Edit Review Modal -->
+<div class="admin-modal" id="review-modal">
+  <div class="admin-modal__card">
+    <h3 class="auth-title" id="review-modal-title" style="font-size: 20px;">Add Creator Review</h3>
+    <form id="review-form">
+      <input type="hidden" id="r-index" value="-1" />
+      <div class="input-group">
+        <label class="input-label" for="r-text">Review Quote</label>
+        <textarea id="r-text" class="input-field" rows="3" placeholder="e.g. Nice edits, fast worker, very good service." required></textarea>
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="r-name">Creator Name / Handle</label>
+        <input type="text" id="r-name" class="input-field" placeholder="e.g. LemonGuy_2070" required />
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="r-role">Creator Category / Role</label>
+        <input type="text" id="r-role" class="input-field" placeholder="e.g. Brand owner, Podcaster" required />
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="r-ava">Avatar Emoji or Image Link</label>
+        <input type="text" id="r-ava" class="input-field" placeholder="e.g. 🍋 or 🚀 or image URL" value="🎬" />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn--secondary" id="close-review-modal">Cancel</button>
+        <button type="submit" class="btn btn--primary" style="width: auto;">Save Review</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ Studio changes published live!</div>
+
+<script>
+(function () {
+  "use strict";
+  const DEFAULT_PIN = "2910";
+
+  // Factory Defaults
+  const DEFAULT_VIDEOS = [
+    { id: "8-21_9lF67E", title: "Gaming hook edit", tag: "Gaming" },
+    { id: "aouEXi3jmLw", title: "Client-facing short", tag: "Business" },
+    { id: "sZkxqdhtjSg", title: "Talking-head cut", tag: "Talking head" },
+    { id: "b4K5qKoVIeU", title: "Fitness reel", tag: "Fitness" },
+    { id: "s2M6dfN5Pr4", title: "Creator growth edit", tag: "Creator" },
+    { id: "RFRuo_PFjHU", title: "Podcast clip system", tag: "Podcast" },
+    { id: "Iyp11x3ltcU", title: "IRL sequence pacing", tag: "IRL" },
+    { id: "yaQX7gv0hqo", title: "Shorts native pacing", tag: "Shorts" },
+    { id: "AxKK1xydbbk", title: "Lifestyle short", tag: "Lifestyle" },
+    { id: "ULfyrV3idg0", title: "Story-driven edit", tag: "Story" },
+    { id: "Pnokb9btTZ4", title: "High-converting cut", tag: "Business" },
+  ];
+
+  const DEFAULT_QUOTES = [
+    { text: "Nice edits, fast worker, very good service.", name: "LemonGuy_2070", role: "Brand owner", ava: "🍋", stars: 5 },
+    { text: "Nice edits, fast worker — would recommend him 100%.", name: "Bullo Producer", role: "Content creator", ava: "🎵", stars: 5 },
+    { text: "Perfectly did my edit as I expected, great work. Would recommend to anyone looking for an editor.", name: "Carl J.", role: "Podcaster", ava: "🎙️", stars: 5 },
+    { text: "Perfect videos, fast edits, and high retention / sub conversion.", name: "Matty", role: "Content creator", ava: "🚀", stars: 5 },
+    { text: "Edited a step-by-step cooking video for me. Great service, fast edits.", name: "Yeesh_24", role: "Creator", ava: "👨‍🍳", stars: 5 },
+    { text: "Very good edit — bro cooked, for real.", name: "Pibbs", role: "Creator", ava: "🎮", stars: 5 },
+    { text: "Needed captions and effects added — clean, fast, done in under an hour with everything I needed.", name: "LMGX", role: "Content creator", ava: "🎬", stars: 5 },
+    { text: "High quality edit finished in about five minutes. Clean, professional and seriously fast.", name: "Morgan", role: "Content creator", ava: "⚡", stars: 5 },
+  ];
+
+  // DOM Elements
+  const authSec = document.getElementById("auth-section");
+  const dashSec = document.getElementById("dashboard-section");
+  const authForm = document.getElementById("auth-form");
+  const pinInput = document.getElementById("pin-input");
+  const lockBtn = document.getElementById("lock-btn");
+  const toast = document.getElementById("toast");
+
+  // State Variables
+  let currentState = "available";
+  let currentAccent = "#d8ff1f";
+  let currentLogo = "logo.png";
+  let currentVideos = [...DEFAULT_VIDEOS];
+  let currentReviews = [...DEFAULT_QUOTES];
+
+  // 1. PIN Authentication
+  const authErrMsg = document.getElementById("auth-err-msg");
+  if (sessionStorage.getItem("flow_admin_auth") === "true") {
+    showDashboard();
+  }
+
+  authForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const entered = pinInput.value.trim();
+    const activePin = localStorage.getItem("flow_custom_pin") || DEFAULT_PIN;
+    if (entered === activePin) {
+      if (authErrMsg) authErrMsg.classList.remove("is-show");
+      authSec.classList.add("is-success");
+      sessionStorage.setItem("flow_admin_auth", "true");
+      setTimeout(() => {
+        authSec.classList.remove("is-success");
+        showDashboard();
+      }, 250);
+    } else {
+      if (authErrMsg) authErrMsg.classList.add("is-show");
+      authSec.classList.add("is-shaking");
+      pinInput.value = "";
+      pinInput.focus();
+      setTimeout(() => {
+        authSec.classList.remove("is-shaking");
+      }, 480);
+    }
+  });
+
+  lockBtn.addEventListener("click", () => {
+    sessionStorage.removeItem("flow_admin_auth");
+    dashSec.style.display = "none";
+    authSec.style.display = "block";
+    lockBtn.style.display = "none";
+    pinInput.value = "";
+    if (authErrMsg) authErrMsg.classList.remove("is-show");
+  });
+
+  function showDashboard() {
+    authSec.style.display = "none";
+    dashSec.style.display = "block";
+    lockBtn.style.display = "block";
+    loadAllCMSData();
+  }
+
+  // 2. Tab Navigation
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabPanes = document.querySelectorAll(".tab-pane");
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach((b) => b.classList.remove("is-active"));
+      tabPanes.forEach((p) => p.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const target = document.getElementById(`tab-${btn.dataset.tab}`);
+      if (target) target.classList.add("is-active");
+    });
+  });
+
+  // 3. Load all CMS Data
+  function loadAllCMSData() {
+    // Availability
+    try {
+      const savedStatus = JSON.parse(localStorage.getItem("flow_status"));
+      if (savedStatus) {
+        currentState = savedStatus.state || "available";
+        document.getElementById("custom-status-text").value = savedStatus.text || "Available for new projects";
+      }
+    } catch (e) {}
+    updateStatusUI();
+
+    // Palette
+    const savedCol = localStorage.getItem("flow_accent_color") || "#d8ff1f";
+    setAccent(savedCol);
+
+    // Logo
+    const savedLogo = localStorage.getItem("flow_logo_url") || "logo.png";
+    setLogo(savedLogo);
+
+    // Videos
+    try {
+      const rawV = localStorage.getItem("flow_videos_data");
+      if (rawV) {
+        const v = JSON.parse(rawV);
+        if (Array.isArray(v) && v.length) currentVideos = v;
+      }
+    } catch (e) {}
+    renderVideosList();
+
+    // Reviews
+    try {
+      const rawQ = localStorage.getItem("flow_testimonials_data");
+      if (rawQ) {
+        const q = JSON.parse(rawQ);
+        if (Array.isArray(q) && q.length) currentReviews = q;
+      }
+    } catch (e) {}
+    renderReviewsList();
+
+    // Settings
+    const customPin = localStorage.getItem("flow_custom_pin") || "";
+    if (customPin) document.getElementById("custom-pin-input").value = customPin;
+    const cloudUrl = localStorage.getItem("flow_cloud_url") || "";
+    if (cloudUrl) document.getElementById("cloud-url-input").value = cloudUrl;
+  }
+
+  // --- AVAILABILITY LOGIC ---
+  const statusOpts = document.querySelectorAll(".status-opt");
+  const customStatusText = document.getElementById("custom-status-text");
+  const previewPill = document.getElementById("preview-pill");
+  const previewPillText = document.getElementById("preview-pill-text");
+
+  function updateStatusUI() {
+    statusOpts.forEach((opt) => {
+      opt.classList.toggle("is-selected", opt.dataset.state === currentState);
+    });
+    previewPill.className = `pill-preview is-${currentState}`;
+    previewPillText.textContent = customStatusText.value || "Available for new projects";
+  }
+
+  statusOpts.forEach((opt) => {
+    opt.addEventListener("click", () => {
+      currentState = opt.dataset.state;
+      customStatusText.value = opt.dataset.defaultText;
+      updateStatusUI();
+    });
+  });
+  customStatusText.addEventListener("input", updateStatusUI);
+
+  // --- COLOR PALETTE LOGIC ---
+  const palettePicker = document.getElementById("palette-picker");
+  const paletteHex = document.getElementById("palette-hex");
+  const previewColorBtn = document.getElementById("preview-color-btn");
+  const previewHl = document.getElementById("preview-hl");
+  const swatchBtns = document.querySelectorAll(".swatch-btn");
+
+  function setAccent(color) {
+    currentAccent = color;
+    palettePicker.value = color.startsWith("#") ? color : "#d8ff1f";
+    paletteHex.value = color;
+    document.documentElement.style.setProperty("--accent", color);
+    document.documentElement.style.setProperty("--glow", color.startsWith("#") ? color + "55" : "rgba(216,255,31,.25)");
+    if (previewColorBtn) previewColorBtn.style.background = color;
+    if (previewHl) previewHl.style.background = color;
+
+    swatchBtns.forEach((b) => {
+      b.classList.toggle("is-active", b.dataset.color.toLowerCase() === color.toLowerCase());
+    });
+  }
+
+  swatchBtns.forEach((btn) => {
+    btn.addEventListener("click", () => setAccent(btn.dataset.color));
+  });
+  palettePicker.addEventListener("input", (e) => setAccent(e.target.value));
+  paletteHex.addEventListener("input", (e) => {
+    const val = e.target.value.trim();
+    if (/^#[0-9A-F]{6}$/i.test(val)) setAccent(val);
+  });
+  document.getElementById("reset-color-btn").addEventListener("click", () => setAccent("#d8ff1f"));
+
+  // --- LOGO LOGIC ---
+  const logoDropzone = document.getElementById("logo-dropzone");
+  const logoFileInput = document.getElementById("logo-file-input");
+  const logoUrlInput = document.getElementById("logo-url-input");
+  const logoPreviewImg = document.getElementById("logo-preview-img");
+  const adminBrandLogo = document.getElementById("admin-brand-logo");
+
+  function setLogo(url) {
+    currentLogo = url || "logo.png";
+    logoPreviewImg.src = currentLogo;
+    if (adminBrandLogo) adminBrandLogo.src = currentLogo;
+    if (logoUrlInput && !currentLogo.startsWith("data:")) logoUrlInput.value = currentLogo === "logo.png" ? "" : currentLogo;
+  }
+
+  logoDropzone.addEventListener("click", () => logoFileInput.click());
+  logoFileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setLogo(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+  logoUrlInput.addEventListener("input", (e) => {
+    const u = e.target.value.trim();
+    if (u) setLogo(u);
+  });
+  document.getElementById("reset-logo-btn").addEventListener("click", () => setLogo("logo.png"));
+
+  // --- VIDEOS LOGIC ---
+  const videosList = document.getElementById("videos-list");
+  const videoModal = document.getElementById("video-modal");
+  const videoForm = document.getElementById("video-form");
+  const vIndex = document.getElementById("v-index");
+  const vId = document.getElementById("v-id");
+  const vTitle = document.getElementById("v-title");
+  const vTag = document.getElementById("v-tag");
+
+  function extractYouTubeId(urlOrId) {
+    if (!urlOrId) return "";
+    const clean = urlOrId.trim();
+    const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/)|youtu\.be\/|\?v=)([^#&?]+)/);
+    return match ? match[1] : clean;
+  }
+
+  function renderVideosList() {
+    videosList.innerHTML = currentVideos.map((v, i) => `
+      <div class="item-card">
+        <img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" class="item-thumb" alt="" onerror="this.src='logo.png'" />
+        <div class="item-body">
+          <div class="item-title">${v.title || "Untitled Video"}</div>
+          <div class="item-sub">Tag: <b>${v.tag || "General"}</b> · ID: <code>${v.id}</code></div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn--secondary edit-v-btn" data-index="${i}" style="padding: 8px 12px; font-size: 13px;">Edit</button>
+          <button class="btn btn--danger del-v-btn" data-index="${i}" style="padding: 8px 12px; font-size: 13px;">✕</button>
+        </div>
+      </div>`).join("");
+
+    document.querySelectorAll(".edit-v-btn").forEach((b) => {
+      b.addEventListener("click", () => {
+        const idx = +b.dataset.index;
+        const vid = currentVideos[idx];
+        vIndex.value = idx;
+        vId.value = vid.id;
+        vTitle.value = vid.title || "";
+        vTag.value = vid.tag || "";
+        document.getElementById("video-modal-title").textContent = "Edit Portfolio Video";
+        videoModal.classList.add("is-open");
+      });
+    });
+
+    document.querySelectorAll(".del-v-btn").forEach((b) => {
+      b.addEventListener("click", () => {
+        const idx = +b.dataset.index;
+        currentVideos.splice(idx, 1);
+        renderVideosList();
+      });
+    });
+  }
+
+  document.getElementById("add-video-btn").addEventListener("click", () => {
+    vIndex.value = "-1";
+    vId.value = "";
+    vTitle.value = "";
+    vTag.value = "";
+    document.getElementById("video-modal-title").textContent = "Add Portfolio Video";
+    videoModal.classList.add("is-open");
+  });
+  document.getElementById("close-video-modal").addEventListener("click", () => videoModal.classList.remove("is-open"));
+
+  videoForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = extractYouTubeId(vId.value);
+    const title = vTitle.value.trim();
+    const tag = vTag.value.trim();
+    const idx = +vIndex.value;
+    if (idx >= 0) {
+      currentVideos[idx] = { id, title, tag };
+    } else {
+      currentVideos.push({ id, title, tag });
+    }
+    videoModal.classList.remove("is-open");
+    renderVideosList();
+  });
+
+  document.getElementById("reset-videos-btn").addEventListener("click", () => {
+    if (confirm("Reset videos back to the original 11 showcase videos?")) {
+      currentVideos = [...DEFAULT_VIDEOS];
+      renderVideosList();
+    }
+  });
+
+  // --- REVIEWS LOGIC ---
+  const reviewsList = document.getElementById("reviews-list");
+  const reviewModal = document.getElementById("review-modal");
+  const reviewForm = document.getElementById("review-form");
+  const rIndex = document.getElementById("r-index");
+  const rText = document.getElementById("r-text");
+  const rName = document.getElementById("r-name");
+  const rRole = document.getElementById("r-role");
+  const rAva = document.getElementById("r-ava");
+
+  function renderReviewsList() {
+    reviewsList.innerHTML = currentReviews.map((q, i) => `
+      <div class="item-card">
+        <div style="font-size: 24px; width: 44px; height: 44px; border-radius: 50%; background: #222; display: grid; place-items: center; flex-shrink: 0;">${q.ava || "💬"}</div>
+        <div class="item-body">
+          <div class="item-title">"${q.text}"</div>
+          <div class="item-sub"><b>${q.name}</b> (${q.role}) · ★★★★★</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn--secondary edit-r-btn" data-index="${i}" style="padding: 8px 12px; font-size: 13px;">Edit</button>
+          <button class="btn btn--danger del-r-btn" data-index="${i}" style="padding: 8px 12px; font-size: 13px;">✕</button>
+        </div>
+      </div>`).join("");
+
+    document.querySelectorAll(".edit-r-btn").forEach((b) => {
+      b.addEventListener("click", () => {
+        const idx = +b.dataset.index;
+        const rev = currentReviews[idx];
+        rIndex.value = idx;
+        rText.value = rev.text || "";
+        rName.value = rev.name || "";
+        rRole.value = rev.role || "";
+        rAva.value = rev.ava || "🎬";
+        document.getElementById("review-modal-title").textContent = "Edit Creator Review";
+        reviewModal.classList.add("is-open");
+      });
+    });
+
+    document.querySelectorAll(".del-r-btn").forEach((b) => {
+      b.addEventListener("click", () => {
+        const idx = +b.dataset.index;
+        currentReviews.splice(idx, 1);
+        renderReviewsList();
+      });
+    });
+  }
+
+  document.getElementById("add-review-btn").addEventListener("click", () => {
+    rIndex.value = "-1";
+    rText.value = "";
+    rName.value = "";
+    rRole.value = "";
+    rAva.value = "🎬";
+    document.getElementById("review-modal-title").textContent = "Add Creator Review";
+    reviewModal.classList.add("is-open");
+  });
+  document.getElementById("close-review-modal").addEventListener("click", () => reviewModal.classList.remove("is-open"));
+
+  reviewForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = rText.value.trim();
+    const name = rName.value.trim();
+    const role = rRole.value.trim();
+    const ava = rAva.value.trim() || "🎬";
+    const idx = +rIndex.value;
+    if (idx >= 0) {
+      currentReviews[idx] = { text, name, role, ava, stars: 5 };
+    } else {
+      currentReviews.push({ text, name, role, ava, stars: 5 });
+    }
+    reviewModal.classList.remove("is-open");
+    renderReviewsList();
+  });
+
+  document.getElementById("reset-reviews-btn").addEventListener("click", () => {
+    if (confirm("Reset reviews back to the original 8 client testimonials?")) {
+      currentReviews = [...DEFAULT_QUOTES];
+      renderReviewsList();
+    }
+  });
+
+  // --- SAVE ALL CHANGES ---
+  async function publishAll() {
+    // 1. Status
+    const statusData = {
+      state: currentState,
+      text: customStatusText.value.trim() || "Available for new projects",
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem("flow_status", JSON.stringify(statusData));
+
+    // 2. Palette Accent
+    localStorage.setItem("flow_accent_color", currentAccent);
+
+    // 3. Logo
+    localStorage.setItem("flow_logo_url", currentLogo);
+
+    // 4. Videos
+    localStorage.setItem("flow_videos_data", JSON.stringify(currentVideos));
+
+    // 5. Reviews
+    localStorage.setItem("flow_testimonials_data", JSON.stringify(currentReviews));
+
+    // 6. PIN & Settings
+    const newPin = document.getElementById("custom-pin-input").value.trim();
+    if (newPin) localStorage.setItem("flow_custom_pin", newPin);
+
+    const cloudUrl = document.getElementById("cloud-url-input").value.trim();
+    if (cloudUrl) {
+      localStorage.setItem("flow_cloud_url", cloudUrl);
+      try {
+        await fetch(cloudUrl, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: statusData,
+            accent: currentAccent,
+            logo: currentLogo,
+            videos: currentVideos,
+            reviews: currentReviews,
+            updatedAt: new Date().toISOString()
+          })
+        });
+      } catch (err) {
+        console.warn("Could not sync to cloud endpoint:", err);
+      }
+    }
+
+    // Show Toast
+    toast.classList.add("is-show");
+    setTimeout(() => toast.classList.remove("is-show"), 2800);
+  }
+
+  document.querySelectorAll(".js-save-btn").forEach((btn) => btn.addEventListener("click", publishAll));
+})();
+</script>
+</body>
+</html>

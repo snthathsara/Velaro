@@ -244,13 +244,47 @@ h1,h2,h3,h4 { font-family: "Archivo", sans-serif; margin: 0; letter-spacing: -.0
 .hero__inner { position: relative; z-index: 2; text-align: center; max-width: 900px; margin: 0 auto; }
 
 .pill {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 9px;
   font-size: 13px; font-weight: 600; color: var(--ink-2);
   background: var(--panel); border: 1px solid var(--border);
-  padding: 7px 15px; border-radius: 100px; box-shadow: var(--shadow-sm);
+  padding: 8px 16px; border-radius: 100px; box-shadow: var(--shadow-sm);
   animation: float 5s ease-in-out infinite;
+  transition: background .3s var(--ease), border-color .3s, color .3s, box-shadow .3s, transform .3s;
 }
-.pill__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
+.pill__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 4px var(--glow);
+  transition: background .3s, box-shadow .3s;
+  animation: dotPulse 2.4s infinite ease-in-out;
+}
+
+/* Status variants */
+.pill--status.is-available .pill__dot {
+  background: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, .24);
+}
+.pill--status.is-limited {
+  border-color: rgba(245, 158, 11, .28);
+}
+.pill--status.is-limited .pill__dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, .24);
+}
+.pill--status.is-busy {
+  background: #141416;
+  color: #f3f3f5;
+  border-color: rgba(255, 255, 255, .14);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .25);
+}
+.pill--status.is-busy .pill__dot {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, .28);
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: .75; }
+}
 @keyframes float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
 
 .hero__title {
@@ -320,7 +354,7 @@ h1,h2,h3,h4 { font-family: "Archivo", sans-serif; margin: 0; letter-spacing: -.0
 .showcase-grid {
   display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity;
   padding: 6px 2px 20px; scroll-padding-left: 2px;
-  scrollbar-width: none; -ms-overflow-style: none; cursor: grab;
+  scrollbar-width: none; -ms-overflow-style: none;
 }
 .showcase-grid::-webkit-scrollbar { display: none; }
 .showcase-grid.is-dragging { cursor: grabbing; scroll-snap-type: none; }
@@ -475,12 +509,18 @@ h1,h2,h3,h4 { font-family: "Archivo", sans-serif; margin: 0; letter-spacing: -.0
 .modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
 .modal.is-open { display: flex; }
 .modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(6px); animation: fade .3s var(--ease); }
-.modal__box { position: relative; z-index: 2; width: min(420px, 92vw); aspect-ratio: 9/16; max-height: 86vh; border-radius: 24px; overflow: hidden; background: #000; box-shadow: 0 40px 100px rgba(0,0,0,.6); animation: pop .35s var(--ease); }
-.modal__frame, .modal__frame iframe { width: 100%; height: 100%; border: 0; }
-.modal__close { position: absolute; top: -46px; right: 0; z-index: 3; background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2); width: 38px; height: 38px; border-radius: 50%; }
-.modal__close:hover { background: rgba(255,255,255,.2); }
+.modal__box { position: relative; z-index: 2; width: min(420px, 92vw); aspect-ratio: 9/16; max-height: 86vh; animation: pop .4s var(--ease); }
+.modal__frame { position: relative; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; background: #000; box-shadow: 0 40px 100px rgba(0,0,0,.6); }
+.modal__frame iframe { position: relative; z-index: 2; width: 100%; height: 100%; border: 0; }
+.modal__spinner { position: absolute; z-index: 1; top: 50%; left: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 3px solid rgba(255,255,255,.18); border-top-color: var(--accent); animation: spin .8s linear infinite; transition: opacity .3s; }
+.modal__frame.is-loaded .modal__spinner { opacity: 0; }
+.modal__yt { position: absolute; top: -44px; left: 2px; z-index: 3; display: inline-flex; align-items: center; gap: 5px; color: #fff; font-size: 13px; font-weight: 600; opacity: .72; transition: opacity .2s, transform .25s var(--ease); }
+.modal__yt:hover { opacity: 1; transform: translateX(2px); }
+.modal__close { position: absolute; top: -46px; right: 0; z-index: 3; background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2); width: 38px; height: 38px; border-radius: 50%; transition: background .2s, transform .25s var(--ease); }
+.modal__close:hover { background: rgba(255,255,255,.2); transform: rotate(90deg); }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes pop { from { opacity: 0; transform: scale(.92) translateY(14px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ============================================================
    CUSTOM CURSOR
@@ -505,6 +545,47 @@ body.custom-cursor [role="button"], body.custom-cursor .vcard, body.custom-curso
    ============================================================ */
 .reveal { opacity: 0; transform: translateY(38px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }
+
+/* Staggered children reveal */
+.reveal-stagger > * { opacity: 0; transform: translateY(30px) scale(.985); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
+.reveal-stagger.in > * { opacity: 1; transform: none; }
+
+/* ============================================================
+   ENHANCED MOTION — hero load + hovers
+   ============================================================ */
+.hero__inner--load > * { animation: heroIn .9s var(--ease) both; }
+.hero__inner--load > .pill        { animation-delay: .05s; }
+.hero__inner--load > .hero__title { animation-delay: .16s; }
+.hero__inner--load > .hero__sub   { animation-delay: .34s; }
+.hero__inner--load > .hero__cta   { animation-delay: .46s; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+
+/* Buttons: arrow nudges forward, smoother press */
+.btn span[aria-hidden] { transition: transform .3s var(--ease); }
+.btn:hover span[aria-hidden] { transform: translateX(4px); }
+.btn:active { transform: translate(var(--x,0), 1px) scale(.98); }
+
+/* Bento icon reacts on card hover */
+.bento__ico { transition: background .3s var(--ease), transform .4s var(--ease); }
+.bento__ico svg { transition: stroke .3s var(--ease); }
+.bento__card:hover .bento__ico { background: var(--accent); transform: rotate(-8deg) scale(1.08); }
+.bento__card:hover .bento__ico svg { stroke: #0a0a0a; }
+.bento__card--accent:hover .bento__ico { background: rgba(10,10,10,.14); }
+.bento__card--accent:hover .bento__ico svg { stroke: #0a0a0a; }
+
+/* Cards: lime-tinted border on hover */
+.stat, .price-card, .tquote { transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .3s var(--ease); }
+.stat:hover, .bento__card:hover, .price-card:hover, .tquote:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+
+/* Logo + nav + footer micro-interactions */
+.brand__mark { transition: transform .4s var(--ease); }
+.brand:hover .brand__mark { transform: rotate(-10deg) scale(1.08); }
+.footer__col a { position: relative; transition: color .2s, transform .25s var(--ease); }
+.footer__col a:hover { transform: translateX(4px); }
+.acc { transition: border-color .3s, box-shadow .3s, transform .3s var(--ease); }
+.acc:hover:not(.is-open) { transform: translateX(3px); border-color: var(--border-strong); }
+.eyebrow { transition: transform .3s var(--ease), background .3s; }
+.section-head:hover .eyebrow { transform: translateY(-2px); }
 
 /* ============================================================
    RESPONSIVE
@@ -552,6 +633,6 @@ body.custom-cursor [role="button"], body.custom-cursor .vcard, body.custom-curso
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
-  .reveal { opacity: 1; transform: none; }
-  .marquee__track { animation: none; }
+  .reveal, .reveal-stagger > *, .hero__inner--load > * { opacity: 1 !important; transform: none !important; }
+  .marquee__track, .tmarquee__row { animation: none; }
 }
