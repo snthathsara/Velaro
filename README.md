@@ -1,30 +1,29 @@
-# Pro Panda
+# Velaro
 
-**Elite Short-Form & High-Retention Video Editing Studio**
+**Minimal, High-Retention Video Editing Studio**
 
-A high-performance, dependency-free creative portfolio website (HTML + CSS + Vanilla JS) crafted for **Pro Panda**. Featuring an aggressive Crimson Red & Obsidian Black esports/creator aesthetic, interactive Before & After hook breakdown studio, filterable showcase carousel, real client roster, live CMS admin portal, and frictionless Discord onboarding.
+A high-performance, dependency-free creative portfolio website (HTML + CSS + Vanilla JS) crafted for **Velaro**. Featuring a minimal Deep Obsidian Black & Warm Golden Amber aesthetic, frosted glassmorphism, verified creator client roster (Sunny and Melon, RoRants, Jamesy, GamesTried, DonaldDucc, Kingg, Misty, etc.), dual-format showcase (Short Form 9:16 & Long Form 16:9), and studio control portal.
 
 ---
 
-## 🐼 Brand Identity
+## ✨ Brand Identity
 
-- **Brand Name**: Pro Panda
-- **Theme**: Obsidian Dark Base (`#08080a`) + Fierce Crimson Red Accent (`#ff1e38`)
-- **Typography**: Google Fonts `Syne` (Display) + `Inter Tight` (Body) + `JetBrains Mono` (Technical Data)
-- **Logo**: Custom Red/Black/White Shield Emblem Badge
+- **Brand Name**: Velaro
+- **Theme**: Deep Obsidian Black (`#07070a` / `#0d0c11`) + Warm Golden Amber Accent (`#f59e0b` / `#fbbf24`)
+- **Typography**: Google Fonts `Plus Jakarta Sans` + `JetBrains Mono`
+- **Logo**: Golden Illustrated Duck Artwork (`logo.png`)
 
 ---
 
 ## 🌟 Key Features
 
-1. **Past Client Roster**: Proof bar highlighting top YouTube creators (Windpress with 2.61M subs, Twezy with 739K subs, Vixerz with 52K subs, baldcutG with 25K subs, Gena Mikaela with 9.1K subs, and BraylienBlox).
-2. **Interactive Before & After Hook Studio**: Real-time breakdown comparing flat unedited gameplay/footage against a Pro Panda Retention Cut (3D zooms, stacked SFX, motion graphics, kinetic subtitles).
-3. **Dynamic Showcase & Category Filters**: Filter edits across *All*, *Gaming & Esports*, *Talking Head*, *Creator Shorts*, and *Podcasts* with instant HD modal player.
-4. **Hero 3D Card Deck**: Auto-shuffling video frames with interactive hover perspective.
-5. **Interactive Pricing Calculator**: Toggle between *Monthly Retainers* and *Per-Video Bundles* with struck 20% promotional discounts.
-6. **Creator Reviews Marquee**: Infinite dual-row marquee with verified channel stats and 5-star testimonials.
-7. **Studio Control Portal (`admin.html`)**: Protected with PIN access (`1111`) to update availability status, custom colors, logo, showcase videos, and creator reviews with instantaneous live synchronization.
-8. **Responsive & Accessible**: Optimized for mobile (375px), tablet (768px), and ultra-wide displays with reduced-motion support.
+1. **Creator Client Roster**: Proof bar highlighting top YouTube creators (Sunny and Melon with 3.01M subs, RoRants with 1.62M subs, Jamesy with 474K subs, GamesTried with 386K subs, Misty with 139K subs, DonaldDucc with 120K subs, CrazyGifter with 109K subs, Kingg with 98K subs, r0aR, Camel27, Monotone, Tropical Paradox).
+2. **Dual-Format Showcase**: Filter cuts between *All Formats*, *Short Form (9:16)*, and *Long Form (16:9)* with category filters and instant video modal preview.
+3. **Hero 3D Card Deck**: Auto-shuffling video frames with interactive perspective.
+4. **Interactive Pricing Calculator**: Toggle between *Monthly Retainers* and *Per-Video Bundles* with 20% promotional discounts.
+5. **Creator Reviews Marquee**: Infinite dual-row marquee with real creator avatars and 5-star testimonials.
+6. **Studio Control Portal (`admin.html`)**: Protected with PIN access (`1111`) to manage availability status, custom color themes, logo branding, and studio settings.
+7. **Ultra-Smooth 120 FPS Performance**: Hardware-accelerated fixed ambient gradient and requestAnimationFrame-throttled scroll handlers for lag-free performance.
 
 ---
 
@@ -33,11 +32,11 @@ A high-performance, dependency-free creative portfolio website (HTML + CSS + Van
 No build step required. Simply open `index.html` in any modern web browser or serve locally:
 
 ```bash
-npx serve .
+python -m http.server 3000
 ```
 
 ---
 
-## 🎮 Inquiries
+## 🎬 Inquiries
 
-For editing retainers and sample cuts, inquire directly through the studio portal.
+For video editing retainers and sample cuts, inquire directly through the studio portal.
