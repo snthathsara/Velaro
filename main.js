@@ -1,7 +1,9 @@
 /* ============================================================
-   PRO PANDA — main.js
+   VELARO — main.js
    Minimal, High-Performance Studio Engine (Short & Long Form)
+   Palette: Deep Midnight Charcoal + Warm Golden Amber
    ============================================================ */
+
 (function () {
   "use strict";
 
@@ -9,12 +11,6 @@
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
-
-  /* Clear stale video cache */
-  try {
-    localStorage.removeItem("flow_videos_data");
-    localStorage.removeItem("propanda_videos_data");
-  } catch (e) {}
 
   /* ============================================================
      1. THEME & COLOR ACCENT
@@ -26,8 +22,7 @@
       const next = current === "dark" ? "light" : "dark";
       root.setAttribute("data-theme", next);
       try {
-        localStorage.setItem("propanda-theme", next);
-        localStorage.setItem("flow-theme", next);
+        localStorage.setItem("velaro-theme", next);
       } catch (e) {}
     });
   }
@@ -37,20 +32,24 @@
     root.style.setProperty("--accent", hex);
   }
 
-  const savedAccent = localStorage.getItem("propanda_accent_color") || localStorage.getItem("flow_accent_color");
-  if (savedAccent) applyAccentColor(savedAccent);
+  let savedAccent = localStorage.getItem("velaro_accent_color");
+  if (!savedAccent || savedAccent === "#ff1e38" || savedAccent === "#dc2626") {
+    savedAccent = "#f59e0b";
+    try { localStorage.setItem("velaro_accent_color", "#f59e0b"); } catch (e) {}
+  }
+  applyAccentColor(savedAccent);
 
   /* ============================================================
      2. BRAND LOGO
      ============================================================ */
   function applyLogo(url) {
     if (!url) return;
-    $$(".brand__mark").forEach((img) => { img.src = url; });
+    $$(".brand__mark, #nav-brand-logo").forEach((img) => { img.src = url; });
     const fav = $("#site-favicon");
     if (fav) fav.href = url;
   }
 
-  const savedLogo = localStorage.getItem("propanda_logo_url") || localStorage.getItem("flow_logo_url");
+  const savedLogo = localStorage.getItem("velaro_logo_url");
   if (savedLogo) applyLogo(savedLogo);
 
   /* ============================================================
@@ -65,12 +64,12 @@
     const text = data.text || (state === "busy" ? "Completely Booked" : state === "limited" ? "2 Slots Open" : "Available");
     availText.textContent = text;
 
-    const dotColor = data.dotColor || (state === "busy" ? "#ef4444" : state === "limited" ? "#f59e0b" : "#10b981");
+    const dotColor = data.dotColor || (state === "busy" ? "#ef4444" : state === "limited" ? "#f97316" : "#f59e0b");
     document.documentElement.style.setProperty("--status-dot-color", dotColor);
   }
 
   try {
-    const raw = localStorage.getItem("propanda_status") || localStorage.getItem("flow_status");
+    const raw = localStorage.getItem("velaro_status");
     if (raw) applyStatus(JSON.parse(raw));
   } catch (e) {}
 
@@ -79,10 +78,10 @@
      ============================================================ */
   const pad = (n) => String(n).padStart(2, "0");
   let end;
-  try { end = +(localStorage.getItem("propanda-deadline") || localStorage.getItem("flow-deadline")); } catch (e) {}
+  try { end = +localStorage.getItem("velaro-deadline"); } catch (e) {}
   if (!end || end < Date.now()) {
     end = Date.now() + (4 * 24 * 60 + 16 * 60 + 22) * 60 * 1000;
-    try { localStorage.setItem("propanda-deadline", end); } catch (e) {}
+    try { localStorage.setItem("velaro-deadline", end); } catch (e) {}
   }
   const cd = { d: $("#cd-d"), h: $("#cd-h"), m: $("#cd-m"), s: $("#cd-s") };
   function tick() {
@@ -143,37 +142,46 @@
     });
   }
 
-  // Scroll active spy
+  // High-performance RAF-throttled Scroll active spy
   const sections = ["home", "roster", "showcase", "process", "pricing", "faq"].map(id => $(`#${id}`)).filter(Boolean);
-  
+  let isNavSpyTicking = false;
+  let activeNavId = "home";
+  let isScrolledState = false;
+
   function updateNavSpy() {
+    isNavSpyTicking = false;
     const scrollPos = window.scrollY + 160;
     let currentId = "home";
-    sections.forEach(sec => {
-      if (sec.offsetTop <= scrollPos) {
-        currentId = sec.id;
+    for (let i = 0; i < sections.length; i++) {
+      if (sections[i].offsetTop <= scrollPos) {
+        currentId = sections[i].id;
       }
-    });
-    navLinks.forEach(link => {
-      const href = link.getAttribute("href");
-      if (href && href.startsWith("#")) {
-        const id = href.replace("#", "");
-        link.classList.toggle("is-active", id === currentId);
-      }
-    });
+    }
+    if (currentId !== activeNavId) {
+      activeNavId = currentId;
+      navLinks.forEach(link => {
+        const href = link.getAttribute("href");
+        if (href && href.startsWith("#")) {
+          link.classList.toggle("is-active", href.replace("#", "") === currentId);
+        }
+      });
+    }
 
-    if (navCapsule) {
-      if (window.scrollY > 40) {
-        navCapsule.style.boxShadow = "0 16px 40px rgba(0, 0, 0, 0.6)";
-        navCapsule.style.transform = "scale(0.99)";
-      } else {
-        navCapsule.style.boxShadow = "";
-        navCapsule.style.transform = "";
-      }
+    const scrolled = window.scrollY > 40;
+    if (scrolled !== isScrolledState && navCapsule) {
+      isScrolledState = scrolled;
+      navCapsule.classList.toggle("is-scrolled", scrolled);
     }
   }
 
-  window.addEventListener("scroll", updateNavSpy, { passive: true });
+  function requestNavSpy() {
+    if (!isNavSpyTicking) {
+      isNavSpyTicking = true;
+      requestAnimationFrame(updateNavSpy);
+    }
+  }
+
+  window.addEventListener("scroll", requestNavSpy, { passive: true });
   updateNavSpy();
 
   /* ============================================================
@@ -218,38 +226,15 @@
         io.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
   $$(".reveal, .reveal-stagger").forEach((el) => io.observe(el));
 
   /* ============================================================
-     8. 3D CARD TILT & DYNAMIC GLASS SPECULAR GLARE
-     ============================================================ */
-  if (!reduce && matchMedia("(hover: hover)").matches) {
-    $$(".tilt-card").forEach((card) => {
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        const rotX = ((y - cy) / cy) * -5;
-        const rotY = ((x - cx) / cx) * 5;
-        card.style.setProperty("--mouse-x", `${x}px`);
-        card.style.setProperty("--mouse-y", `${y}px`);
-        card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
-      });
-      card.addEventListener("mouseleave", () => {
-        card.style.transform = "";
-      });
-    });
-  }
-
-  /* ============================================================
-     9. ANIMATED COUNTERS
+     8. ANIMATED COUNTERS
      ============================================================ */
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
   function runCount(el) {
-    const target = +el.dataset.count;
+    const target = +el.dataset.target || 0;
     const suffix = el.dataset.suffix || "";
     const prefix = el.dataset.prefix || "";
     const dur = 1400;
@@ -267,16 +252,16 @@
     entries.forEach((e) => {
       if (e.isIntersecting) {
         if (reduce) {
-          e.target.textContent = (e.target.dataset.prefix || "") + e.target.dataset.count + (e.target.dataset.suffix || "");
+          e.target.textContent = (e.target.dataset.prefix || "") + e.target.dataset.target + (e.target.dataset.suffix || "");
         } else runCount(e.target);
         countIO.unobserve(e.target);
       }
     });
   }, { threshold: 0.5 });
-  $$("[data-count]").forEach((el) => countIO.observe(el));
+  $$(".stat__num").forEach((el) => countIO.observe(el));
 
   /* ============================================================
-     10. PORTFOLIO SHOWCASE: SHORT FORM & LONG FORM DATA
+     9. PORTFOLIO SHOWCASE: SHORT & LONG FORM DATA
      ============================================================ */
   const SHORT_FORM_VIDEOS = [
     { id: "short-1", title: "Valorant & FPS Elimination Hook Cut", tag: "Gaming", duration: "0:42", pps: "4K 60FPS", style: "Esports Hyper-Pacing", format: "short" },
@@ -294,100 +279,78 @@
     { id: "long-2", title: "100-Hour Survival Challenge — YouTube Full Episode", tag: "YouTube Video", duration: "18:45", pps: "4K 60FPS", style: "Multi-Cam Sync & Visual Pacing", format: "long" },
     { id: "long-3", title: "Pro Tournament Finals: Comprehensive Stream Cut", tag: "Stream Highlight", duration: "11:10", pps: "4K 60FPS", style: "Live Reaction Timing & Audio Balance", format: "long" },
     { id: "long-4", title: "Deep Dive Creator Interview & Masterclass", tag: "Podcast", duration: "32:15", pps: "4K 60FPS", style: "Chaptering, Lower Thirds & Dynamic B-Roll", format: "long" },
-    { id: "long-5", title: "Cinematic Gaming Montage & Narrative Storyline", tag: "Cinematic Gaming", duration: "08:30", pps: "4K 60FPS", style: "OLED Color Grading & Sound FX", format: "long" },
-    { id: "long-6", title: "Behind the Scenes Creator Journey Episode", tag: "YouTube Video", duration: "16:50", pps: "4K 60FPS", style: "Story Pacing & Motion Graphics", format: "long" }
+    { id: "long-5", title: "Cinematic Gaming Montage & Narrative Storyline", tag: "Gaming", duration: "08:30", pps: "4K 60FPS", style: "Color Grading & Sound FX", format: "long" },
+    { id: "long-6", title: "Behind the Scenes Creator Journey Episode", tag: "Documentary", duration: "16:50", pps: "4K 60FPS", style: "Story Pacing & Motion Graphics", format: "long" }
   ];
 
-  const SHORT_FILTERS = [
-    { label: "All Short Form", value: "all" },
-    { label: "Gaming", value: "Gaming" },
-    { label: "Talking Head", value: "Talking head" },
-    { label: "Creator Shorts", value: "Creator" },
-    { label: "Podcasts", value: "Podcast" }
-  ];
-
-  const LONG_FILTERS = [
-    { label: "All Long Form", value: "all" },
-    { label: "YouTube Videos", value: "YouTube Video" },
-    { label: "Documentaries", value: "Documentary" },
-    { label: "Stream Highlights", value: "Stream Highlight" },
-    { label: "Podcasts", value: "Podcast" },
-    { label: "Cinematic Gaming", value: "Cinematic Gaming" }
-  ];
-
-  let currentFormat = "short"; // 'short' | 'long'
+  let currentFormat = "all"; // 'all' | 'short' | 'long'
   let currentFilter = "all";
 
-  const grid = $("#showcase-grid");
-  const deck = $("#deck");
-  const filterPillsContainer = $("#showcase-filters");
-  const formatShortBtn = $("#format-short-btn");
-  const formatLongBtn = $("#format-long-btn");
+  const showcaseContainer = $("#showcase-container");
+  const fmtAllBtn = $("#fmt-all");
+  const fmtShortBtn = $("#fmt-short");
+  const fmtLongBtn = $("#fmt-long");
+  const categoryFilters = $("#category-filters");
 
-  function renderFilterPills() {
-    if (!filterPillsContainer) return;
-    const filters = currentFormat === "short" ? SHORT_FILTERS : LONG_FILTERS;
-    filterPillsContainer.innerHTML = filters.map(f => `
-      <button class="filter-pill ${f.value === currentFilter ? 'is-active' : ''}" data-filter="${f.value}">
-        ${f.label}
-      </button>
-    `).join("");
+  function getActiveVideos() {
+    let list = [];
+    if (currentFormat === "short") list = SHORT_FORM_VIDEOS;
+    else if (currentFormat === "long") list = LONG_FORM_VIDEOS;
+    else list = [...SHORT_FORM_VIDEOS, ...LONG_FORM_VIDEOS];
+
+    if (currentFilter === "all") return list;
+    return list.filter(v => v.tag.toLowerCase().includes(currentFilter.toLowerCase()) || currentFilter.toLowerCase().includes(v.tag.toLowerCase()));
   }
 
   function renderShowcase() {
-    if (!grid) return;
-    const vids = currentFormat === "short" ? SHORT_FORM_VIDEOS : LONG_FORM_VIDEOS;
-    const isLong = currentFormat === "long";
-    const filtered = currentFilter === "all" 
-      ? vids 
-      : vids.filter(v => v.tag.toLowerCase().includes(currentFilter.toLowerCase()) || currentFilter.toLowerCase().includes(v.tag.toLowerCase()));
+    if (!showcaseContainer) return;
+    const vids = getActiveVideos();
     
-    grid.innerHTML = filtered.map((v) => `
-      <div class="vcard ${isLong ? 'vcard--long' : ''} tilt-card" 
-           data-sample-id="${v.id}" 
-           data-title="${v.title}" 
-           data-tag="${v.tag}" 
-           data-dur="${v.duration}" 
-           data-style="${v.style}" 
-           data-format="${v.format}"
-           aria-label="Sample cut: ${v.title}">
-        <div class="vcard__art">
-          <div class="vcard__art-icon">${isLong ? '🎬' : '▶'}</div>
-          <span class="vcard__art-meta">${v.pps} · ${v.duration}</span>
-        </div>
-        <span class="vcard__badge">${v.tag}</span>
-        <span class="vcard__duration">${v.duration}</span>
-        <span class="vcard__grad"></span>
-        <div class="vcard__info">
-          <div class="vcard__title">${v.title}</div>
-          <div class="vcard__tag">${v.style}</div>
-        </div>
-        <span class="vcard__play" aria-hidden="true">▶</span>
-      </div>`).join("");
+    showcaseContainer.innerHTML = vids.map((v) => {
+      const isLong = v.format === "long";
+      return `
+        <div class="vcard ${isLong ? 'vcard--long' : ''}" 
+             data-sample-id="${v.id}" 
+             data-title="${v.title}" 
+             data-tag="${v.tag}" 
+             data-dur="${v.duration}" 
+             data-style="${v.style}" 
+             data-format="${v.format}"
+             aria-label="Sample cut: ${v.title}">
+          <div class="vcard__art">
+            <div class="vcard__art-icon">${isLong ? '🎬' : '▶'}</div>
+            <span class="vcard__art-meta">${v.pps} · ${v.duration}</span>
+          </div>
+          <span class="vcard__badge">${v.tag}</span>
+          <span class="vcard__duration">${v.duration}</span>
+          <span class="vcard__grad"></span>
+          <div class="vcard__info">
+            <div class="vcard__title">${v.title}</div>
+            <div class="vcard__tag">${v.style}</div>
+          </div>
+          <span class="vcard__play" aria-hidden="true">▶</span>
+        </div>`;
+    }).join("");
   }
 
-  function setFormat(fmt, filter = "all") {
+  function setFormat(fmt) {
     currentFormat = fmt;
-    currentFilter = filter;
-
-    if (formatShortBtn && formatLongBtn) {
-      formatShortBtn.classList.toggle("is-active", fmt === "short");
-      formatLongBtn.classList.toggle("is-active", fmt === "long");
-    }
-
-    renderFilterPills();
+    if (fmtAllBtn) fmtAllBtn.classList.toggle("is-active", fmt === "all");
+    if (fmtShortBtn) fmtShortBtn.classList.toggle("is-active", fmt === "short");
+    if (fmtLongBtn) fmtLongBtn.classList.toggle("is-active", fmt === "long");
     renderShowcase();
   }
 
-  if (formatShortBtn) formatShortBtn.addEventListener("click", () => setFormat("short"));
-  if (formatLongBtn) formatLongBtn.addEventListener("click", () => setFormat("long"));
+  if (fmtAllBtn) fmtAllBtn.addEventListener("click", () => setFormat("all"));
+  if (fmtShortBtn) fmtShortBtn.addEventListener("click", () => setFormat("short"));
+  if (fmtLongBtn) fmtLongBtn.addEventListener("click", () => setFormat("long"));
 
-  if (filterPillsContainer) {
-    filterPillsContainer.addEventListener("click", (e) => {
+  if (categoryFilters) {
+    categoryFilters.addEventListener("click", (e) => {
       const pill = e.target.closest(".filter-pill");
       if (!pill) return;
       currentFilter = pill.dataset.filter;
-      $$(".filter-pill", filterPillsContainer).forEach(p => p.classList.remove("is-active"));
+      $$(".filter-pill", categoryFilters).forEach(p => p.classList.remove("is-active"));
       pill.classList.add("is-active");
       renderShowcase();
     });
@@ -408,39 +371,20 @@
     });
   });
 
-  function renderHeroDeck() {
-    if (!deck) return;
-    deck.innerHTML = `
-      <div class="deck__card deck__card--l">
-        <div class="vcard__art" style="background:#111116;">
-          <span class="mono" style="font-size:12px;color:#71717a;">SHORT FORM CUT</span>
-        </div>
-      </div>
-      <div class="deck__card deck__card--r">
-        <div class="vcard__art" style="background:#111116;">
-          <span class="mono" style="font-size:12px;color:#71717a;">LONG FORM CUT</span>
-        </div>
-      </div>
-      <div class="deck__card deck__card--c">
-        <div class="vcard__art" style="background:linear-gradient(145deg, #181820 0%, #0d0d12 100%);">
-          <div class="vcard__art-icon">🐼</div>
-          <span class="mono" style="font-size:13px;color:#fff;font-weight:700;">PRO PANDA MASTER CUT</span>
-          <span style="font-size:11.5px;color:var(--accent);font-weight:600;">Long &amp; Short Form 4K 60FPS</span>
-        </div>
-        <span class="deck__overlay"></span>
-        <div class="deck__play" aria-hidden="true">▶</div>
-      </div>`;
-
-    deck.onclick = (e) => {
-      if (e) e.preventDefault();
-      $("#showcase").scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-    };
+  // Carousel Arrow buttons
+  const prevBtn = $("#carousel-prev");
+  const nextBtn = $("#carousel-next");
+  if (prevBtn && nextBtn && showcaseContainer) {
+    const step = () => ((showcaseContainer.querySelector(".vcard") || {}).offsetWidth || 260) + 18;
+    prevBtn.addEventListener("click", () => showcaseContainer.scrollBy({ left: -step() * 2, behavior: "smooth" }));
+    nextBtn.addEventListener("click", () => showcaseContainer.scrollBy({ left: step() * 2, behavior: "smooth" }));
   }
 
-  setFormat("short");
-  renderHeroDeck();
+  renderShowcase();
 
-  /* ---------- Video Modal Preview ---------- */
+  /* ============================================================
+     10. VIDEO MODAL PREVIEW
+     ============================================================ */
   const modal = $("#modal"), frame = $("#modal-frame");
   function openModal(data) {
     const isLong = data.format === "long";
@@ -480,8 +424,8 @@
     document.body.style.overflow = "";
   }
 
-  if (grid) {
-    grid.addEventListener("click", (e) => {
+  if (showcaseContainer) {
+    showcaseContainer.addEventListener("click", (e) => {
       const card = e.target.closest(".vcard");
       if (card) {
         openModal({
@@ -495,13 +439,6 @@
     });
   }
 
-  const prevBtn = $("#car-prev"), nextBtn = $("#car-next");
-  if (prevBtn && nextBtn && grid) {
-    const step = () => ((grid.querySelector(".vcard") || {}).offsetWidth || 280) + 16;
-    prevBtn.addEventListener("click", () => grid.scrollBy({ left: -step() * 2, behavior: "smooth" }));
-    nextBtn.addEventListener("click", () => grid.scrollBy({ left: step() * 2, behavior: "smooth" }));
-  }
-
   $$("[data-close]", modal).forEach((el) => el.addEventListener("click", closeModal));
   modal.addEventListener("click", (e) => {
     if (e.target.hasAttribute("data-close")) closeModal();
@@ -511,217 +448,92 @@
   });
 
   /* ============================================================
-     11. TESTIMONIALS MARQUEE
+     11. VERIFIED VITRINE CLIENT REVIEWS
      ============================================================ */
-  const DEFAULT_QUOTES = [
-    { text: "Pro Panda turned our gameplay clips into pure algorithm fuel. Retention skyrocketed from 35% to 84%.", name: "Windpress", role: "2.61M YouTube Creator", ava: "assets/creators/windpress.jpg", stars: 5 },
-    { text: "Fast turnaround, great sound design, and super reliable. My shorts have never performed better.", name: "Twezy", role: "739K YouTube Creator", ava: "assets/creators/twezy.jpg", stars: 5 },
-    { text: "Clean cuts, hilarious pacing, exactly what our audience loves.", name: "Vixerz", role: "52K Roblox Creator", ava: "assets/creators/vixerz.jpg", stars: 5 },
-    { text: "High quality edits finished rapidly. Clean subtitles, great zoom keyframing, 100% recommended.", name: "baldcutG", role: "25K YouTube Creator", ava: "assets/creators/baldcutg.jpg", stars: 5 },
-    { text: "Great communication, perfect aesthetic consistency, and flawless audio mixing on every video.", name: "Gena Mikaela", role: "Creator & Vlogger", ava: "assets/creators/genamikaela.jpg", stars: 5 },
-    { text: "Top-tier Roblox cuts and trolling hooks. Turned raw stream highlights into 1M+ view viral shorts.", name: "BraylienBlox", role: "Roblox Gaming Creator", ava: "assets/creators/braylienblox.jpg", stars: 5 }
+  const DEFAULT_VITRINE_QUOTES = [
+    { text: "Nice edits, fast worker, very good service.", name: "LemonGuy_2070", role: "Brand Owner", ava: "🍋", stars: 5 },
+    { text: "Nice edits, fast worker — would recommend him 100%.", name: "Bullo Producer", role: "Content Creator", ava: "🎵", stars: 5 },
+    { text: "Perfectly did my edit as I expected, great work. Would recommend to anyone looking for an editor.", name: "Carl J.", role: "Podcaster", ava: "🎙️", stars: 5 },
+    { text: "Perfect videos, fast edits, and high retention / sub conversion.", name: "Matty", role: "Content Creator", ava: "🚀", stars: 5 },
+    { text: "Edited a step-by-step cooking video for me. Great service, fast edits.", name: "Yeesh_24", role: "Creator", ava: "👨‍🍳", stars: 5 },
+    { text: "Very good edit — bro cooked, for real.", name: "Pibbs", role: "Gaming Creator", ava: "🎮", stars: 5 },
+    { text: "Needed captions and effects added — clean, fast, done in under an hour with everything I needed.", name: "LMGX", role: "Content Creator", ava: "🎬", stars: 5 },
+    { text: "High quality edit finished in about five minutes. Clean, professional and seriously fast.", name: "Morgan", role: "Content Creator", ava: "⚡", stars: 5 }
   ];
 
-  let currentQuotes = DEFAULT_QUOTES;
-  try {
-    const rawQ = localStorage.getItem("propanda_testimonials_data") || localStorage.getItem("flow_testimonials_data");
-    if (rawQ) {
-      const parsed = JSON.parse(rawQ);
-      if (Array.isArray(parsed) && parsed.length) currentQuotes = parsed;
-    }
-  } catch (e) {}
-
   function renderTestimonials(quotes) {
-    const cont = $("#quotes");
-    if (!cont || !quotes.length) return;
-
-    const qCard = (q) => {
-      const isImg = q.ava && (q.ava.startsWith("assets/") || q.ava.startsWith("data:") || q.ava.startsWith("http") || q.ava.startsWith("/"));
-      const avaHtml = isImg 
-        ? `<img src="${q.ava}" alt="${q.name}" class="quote__ava" onerror="this.src='logo.png'" />` 
-        : `<span class="quote__ava" style="display:grid;place-items:center;font-size:15px;">💬</span>`;
-      const starsCount = q.stars || 5;
-      const starsStr = "★".repeat(starsCount) + "☆".repeat(5 - starsCount);
-
-      return `
-        <figure class="tquote tilt-card">
-          <div class="quote__stars" aria-label="${starsCount} out of 5 stars">${starsStr}</div>
-          <blockquote class="quote__text">"${q.text}"</blockquote>
-          <figcaption class="quote__who">
-            ${avaHtml}
-            <div>
-              <div class="quote__name">${q.name}</div>
-              <div class="quote__role">${q.role || "Creator"}</div>
-            </div>
-          </figcaption>
-        </figure>`;
-    };
-
+    const cont = $("#quotes-container");
+    if (!cont) return;
     const mid = Math.ceil(quotes.length / 2);
     const row1 = quotes.slice(0, mid);
     const row2 = quotes.slice(mid);
-    const r1List = row1.length < 4 ? [...row1, ...row1, ...row1] : [...row1, ...row1];
-    const r2List = (row2.length ? row2 : row1).length < 4 ? [...(row2.length ? row2 : row1), ...(row2.length ? row2 : row1), ...(row2.length ? row2 : row1)] : [...(row2.length ? row2 : row1), ...(row2.length ? row2 : row1)];
-
-    cont.innerHTML =
-      `<div class="tmarquee__row tmarquee__row--a">${r1List.map(qCard).join("")}</div>` +
-      `<div class="tmarquee__row tmarquee__row--b">${r2List.map(qCard).join("")}</div>`;
+    const qCard = (q) => `
+      <blockquote class="tquote">
+        <div class="quote__stars" aria-label="5 stars">★★★★★</div>
+        <p class="quote__text">"${q.text}"</p>
+        <div class="quote__who">
+          <span class="quote__ava" aria-hidden="true">${q.ava || '⭐'}</span>
+          <div>
+            <div class="quote__name">${q.name}</div>
+            <div class="quote__role">${q.role}</div>
+          </div>
+        </div>
+      </blockquote>
+    `;
+    cont.innerHTML = `
+      <div class="tmarquee__row tmarquee__row--a">${[...row1, ...row1, ...row1].map(qCard).join("")}</div>
+      <div class="tmarquee__row tmarquee__row--b">${[...row2, ...row2, ...row2].map(qCard).join("")}</div>
+    `;
   }
 
+  let currentQuotes = DEFAULT_VITRINE_QUOTES;
+  try {
+    const savedQ = localStorage.getItem("velaro_testimonials_data") || localStorage.getItem("propanda_testimonials_data");
+    if (savedQ) {
+      const parsed = JSON.parse(savedQ);
+      if (Array.isArray(parsed) && parsed.length) currentQuotes = parsed;
+    }
+  } catch (e) {}
   renderTestimonials(currentQuotes);
 
   /* ============================================================
      12. PRICING TOGGLE
      ============================================================ */
-  const tabMonthly = $("#tab-monthly");
-  const tabPerVideo = $("#tab-pervideo");
-  const pricingContainer = $("#pricing-container");
+  const btnMonthly = $("#btn-monthly");
+  const btnPerVideo = $("#btn-per-video");
+  const priceStarter = $("#price-starter");
+  const oldStarter = $("#old-starter");
+  const priceGrowth = $("#price-growth");
+  const oldGrowth = $("#old-growth");
+  const priceApex = $("#price-apex");
+  const oldApex = $("#old-apex");
 
-  const MONTHLY_PACKAGES = `
-    <!-- Tier 1: Growth -->
-    <article class="price-card tilt-card">
-      <div>
-        <div class="price-card__title">Growth Pack</div>
-        <div class="price-card__sub">15 Videos · 1 Video Every 2 Days</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>170</div>
-          <span class="price-card__old">$213</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Hook pacing &amp; dead air elimination</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kinetic animated captions</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Multi-layer sound design</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 48-Hour delivery guarantee</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 2 Rounds of revisions</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--dark btn--block">Select Package</button>
-    </article>
-
-    <!-- Tier 2: Creator (Featured) -->
-    <article class="price-card price-card--featured tilt-card">
-      <span class="price-card__badge">Most Popular</span>
-      <div>
-        <div class="price-card__title">Creator Beast</div>
-        <div class="price-card__sub">30 Videos · Daily Publishing Rhythm</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>300</div>
-          <span class="price-card__old">$375</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Everything in Growth Pack</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <b>1 FREE Video Included</b></li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Unlimited revisions</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Priority queue &amp; 24h delivery</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom 3D zooms &amp; graphics</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--primary btn--block">Select Package</button>
-    </article>
-
-    <!-- Tier 3: Apex -->
-    <article class="price-card tilt-card">
-      <div>
-        <div class="price-card__title">Apex Syndicate</div>
-        <div class="price-card__sub">45–60 Videos · Scaling Channel System</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>400<span style="font-size: 20px;">–650</span></div>
-          <span class="price-card__old">$500–810</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Everything included</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <b>2 FREE Videos Included</b></li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1-on-1 Dedicated Editor Channel</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Highest priority render queue</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom thumbnail frames</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--dark btn--block">Select Package</button>
-    </article>
-  `;
-
-  const PER_VIDEO_PACKAGES = `
-    <!-- Single Cut -->
-    <article class="price-card tilt-card">
-      <div>
-        <div class="price-card__title">Single Cut</div>
-        <div class="price-card__sub">1 Standalone Video Edit</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>25</div>
-          <span class="price-card__old">$35</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Up to 60 seconds runtime</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Animated captions &amp; motion</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full sound effects pass</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 24-Hour delivery</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--dark btn--block">Order 1 Video</button>
-    </article>
-
-    <!-- 5 Video Bundle -->
-    <article class="price-card price-card--featured tilt-card">
-      <span class="price-card__badge">Best Value</span>
-      <div>
-        <div class="price-card__title">5-Video Bundle</div>
-        <div class="price-card__sub">5 High-Retention Short-Form Cuts</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>95</div>
-          <span class="price-card__old">$125</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 5 Full Retention Edits ($19/video)</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kinetic motion graphics &amp; zooms</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Unlimited revisions</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Priority rendering queue</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--primary btn--block">Order 5 Videos</button>
-    </article>
-
-    <!-- 10 Video Bundle -->
-    <article class="price-card tilt-card">
-      <div>
-        <div class="price-card__title">10-Video Power Pack</div>
-        <div class="price-card__sub">10 High-Retention Cuts</div>
-        <div class="price-card__price-row">
-          <div class="price-card__amount"><span>$</span>160</div>
-          <span class="price-card__old">$210</span>
-          <span class="price-card__save">20% OFF</span>
-        </div>
-        <ul class="price-card__features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 10 Full Retention Edits ($16/video)</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <b>1 FREE Video Included</b></li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Unlimited revisions</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom thumbnail frames</li>
-        </ul>
-      </div>
-      <button type="button" class="btn btn--dark btn--block">Order 10 Videos</button>
-    </article>
-  `;
-
-  if (tabMonthly && tabPerVideo && pricingContainer) {
-    pricingContainer.innerHTML = MONTHLY_PACKAGES;
-    tabMonthly.addEventListener("click", () => {
-      tabMonthly.classList.add("is-active");
-      tabPerVideo.classList.remove("is-active");
-      pricingContainer.innerHTML = MONTHLY_PACKAGES;
+  if (btnMonthly && btnPerVideo) {
+    btnMonthly.addEventListener("click", () => {
+      btnMonthly.classList.add("is-active");
+      btnPerVideo.classList.remove("is-active");
+      if (priceStarter) priceStarter.innerHTML = "<span>$</span>599";
+      if (oldStarter) oldStarter.textContent = "$750";
+      if (priceGrowth) priceGrowth.innerHTML = "<span>$</span>1,199";
+      if (oldGrowth) oldGrowth.textContent = "$1,500";
+      if (priceApex) priceApex.innerHTML = "<span>$</span>2,399";
+      if (oldApex) oldApex.textContent = "$3,000";
     });
-    tabPerVideo.addEventListener("click", () => {
-      tabPerVideo.classList.add("is-active");
-      tabMonthly.classList.remove("is-active");
-      pricingContainer.innerHTML = PER_VIDEO_PACKAGES;
+
+    btnPerVideo.addEventListener("click", () => {
+      btnPerVideo.classList.add("is-active");
+      btnMonthly.classList.remove("is-active");
+      if (priceStarter) priceStarter.innerHTML = "<span>$</span>25";
+      if (oldStarter) oldStarter.textContent = "$35";
+      if (priceGrowth) priceGrowth.innerHTML = "<span>$</span>95";
+      if (oldGrowth) oldGrowth.textContent = "$125";
+      if (priceApex) priceApex.innerHTML = "<span>$</span>160";
+      if (oldApex) oldApex.textContent = "$210";
     });
   }
 
   /* ============================================================
-     13. ACCORDION
+     12. FAQ ACCORDION
      ============================================================ */
   $$(".acc").forEach((acc) => {
     const q = $(".acc__q", acc), a = $(".acc__a", acc);
@@ -744,20 +556,26 @@
   });
 
   /* ============================================================
+     13. HERO DECK CLICK
+     ============================================================ */
+  const heroDeck = $("#hero-deck");
+  if (heroDeck) {
+    heroDeck.addEventListener("click", () => {
+      const showcase = $("#showcase");
+      if (showcase) showcase.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  /* ============================================================
      14. CROSS-TAB LIVE SYNC
      ============================================================ */
   window.addEventListener("storage", (e) => {
-    if ((e.key === "propanda_status" || e.key === "flow_status") && e.newValue) {
+    if (e.key === "velaro_status" && e.newValue) {
       try { applyStatus(JSON.parse(e.newValue)); } catch (err) {}
-    } else if (e.key === "propanda_accent_color" || e.key === "flow_accent_color") {
+    } else if (e.key === "velaro_accent_color" && e.newValue) {
       applyAccentColor(e.newValue);
-    } else if (e.key === "propanda_logo_url" || e.key === "flow_logo_url") {
+    } else if (e.key === "velaro_logo_url" && e.newValue) {
       applyLogo(e.newValue || "logo.png");
-    } else if ((e.key === "propanda_testimonials_data" || e.key === "flow_testimonials_data") && e.newValue) {
-      try {
-        const q = JSON.parse(e.newValue);
-        if (Array.isArray(q)) renderTestimonials(q);
-      } catch (err) {}
     }
   });
 })();

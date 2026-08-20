@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Panda — Video Editor &amp; Retention Studio</title>
+  <link rel="icon" href="logo.png" id="fav-icon" />
+  <link rel="stylesheet" href="v2-styles.css" />
+</head>
+<body>
+
+<!-- Dot Canvas & Ambient Lightings -->
+<div class="dot-grid" aria-hidden="true"></div>
+<div class="top-spotlight" aria-hidden="true"></div>
+<div class="ambient-glow-left" aria-hidden="true"></div>
+<div class="ambient-glow-right" aria-hidden="true"></div>
+
+<div class="container">
+
+  <!-- Technical Top Header Coordinates -->
+  <header class="top-tech-bar">
+    <div class="tech-dots">
+      <span class="tech-dot tech-dot--active"></span>
+      <span class="tech-dot"></span>
+      <span class="tech-dot"></span>
+    </div>
+    <div>.editor / pro_panda.retention</div>
+    <div class="tech-dots">
+      <span class="tech-dot"></span>
+      <span class="tech-dot"></span>
+      <span class="tech-dot tech-dot--active"></span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       HERO SELECTION BOUNDS (Exact Mockup Layout)
+       ============================================================ -->
+  <section class="hero-bounds-section">
+    <div class="selection-box">
+      <!-- 8 Anchor Transform Handles -->
+      <span class="handle handle--tl"></span>
+      <span class="handle handle--tc"></span>
+      <span class="handle handle--tr"></span>
+      <span class="handle handle--ml"></span>
+      <span class="handle handle--mr"></span>
+      <span class="handle handle--bl"></span>
+      <span class="handle handle--bc"></span>
+      <span class="handle handle--br"></span>
+
+      <!-- Interactive Neon Cursor with Click & Drag Sequence on Bottom Right Handle -->
+      <div class="cursor-arrow-wrapper">
+        <span class="cursor-click-ring"></span>
+        <svg class="cursor-arrow" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4 0l16 12.279-6.951 1.17 4.325 8.817-3.596 1.734-4.35-8.879-5.428 5.428v-20.549z"/>
+        </svg>
+      </div>
+
+      <!-- Sub-role Pill -->
+      <div class="hero-role-pill">
+        <span>Video</span> Editor &amp; Retention Specialist
+      </div>
+
+      <!-- Massive Central Typographic Title with Illuminated Logo -->
+      <div>
+        <h1 class="hero-main-title">
+          Portf<span class="hero-title-badge"><img src="logo.png" alt="Pro Panda" /></span>lio
+        </h1>
+      </div>
+
+      <!-- Floating Controls -->
+      <div class="hero-ctrl-bar">
+        <a href="#showcase" class="hero-pill-btn">
+          <span>Explore Timelines</span>
+        </a>
+        <div class="hero-year-badge">
+          <span>↘</span> 2026
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Cue with Downward Arrows -->
+    <div class="hero-scroll-cue">
+      <span>↘</span> Select a timeline and explore the editing pipeline <span>↙</span>
+    </div>
+  </section>
+
+  <!-- Technical Divider -->
+  <div class="tech-divider">
+    <span>.studio_retention</span>
+    <span class="tech-divider__line"></span>
+    <span>2026_EDITION</span>
+  </div>
+
+  <!-- ============================================================
+       SPLIT STUDIO SECTION (About & Pipeline VS Softwares & Logo)
+       ============================================================ -->
+  <section class="studio-grid" id="about">
+
+    <!-- LEFT COLUMN: About & Numbered Categories -->
+    <div>
+      <!-- About Card -->
+      <article class="about-card">
+        <span class="card-tag">About Pro Panda</span>
+        <h3 id="about-title">High-retention short-form and long-form video architecture for scaling channels.</h3>
+        <p id="about-desc">
+          We transform raw footage into <span class="about-highlight">algorithm-ready</span> content. Specializing in fast pacing, custom sound design stacks, dynamic 3D keyframe zooms, and viral retention engineering that increases Average View Duration.
+        </p>
+        <ul class="about-list">
+          <li>🔥 Worked with top creators totaling 3.5M+ subscribers</li>
+          <li>⚡ 24-48h turnaround with 4K ProRes timeline exports</li>
+          <li>🎧 Layered whooshes, risers &amp; kinetic typography</li>
+        </ul>
+      </article>
+
+      <!-- Numbered Pipeline Categories (1, 2, 3, 4, 5) -->
+      <article class="pipeline-card">
+        <span class="card-tag">Editing Pipeline Categories</span>
+        <div class="pipeline-items" id="pipeline-container">
+          <div class="pipeline-chip">
+            <span class="chip-num">1</span>
+            <span class="chip-badge">Hook Extraction</span>
+          </div>
+          <div class="pipeline-chip">
+            <span class="chip-num">2</span>
+            <span class="chip-badge">Kinetic Subtitles</span>
+          </div>
+          <div class="pipeline-chip">
+            <span class="chip-num">3</span>
+            <span class="chip-badge">Sound Design Stack</span>
+          </div>
+          <div class="pipeline-chip">
+            <span class="chip-num">4</span>
+            <span class="chip-badge">Color &amp; Motion FX</span>
+          </div>
+          <div class="pipeline-chip">
+            <span class="chip-num">5</span>
+            <span class="chip-badge chip-badge--solid">24-48h Delivery</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- RIGHT COLUMN: Bounded Box (Hologram Emblem + Softwares) -->
+    <div>
+      <div class="visual-bounds-box">
+        <!-- 8 Bounding Box Handles -->
+        <span class="handle handle--tl"></span>
+        <span class="handle handle--tc"></span>
+        <span class="handle handle--tr"></span>
+        <span class="handle handle--ml"></span>
+        <span class="handle handle--mr"></span>
+        <span class="handle handle--bl"></span>
+        <span class="handle handle--bc"></span>
+        <span class="handle handle--br"></span>
+
+        <!-- Handwritten 'SOFTWARES' Callout with Curved Arrow -->
+        <div class="softwares-callout">
+          <span>SOFTWARES</span>
+          <svg viewBox="0 0 50 50">
+            <path d="M10,10 Q35,15 35,40 M28,32 L35,40 L42,32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Central Illuminated 3D Panda Emblem -->
+        <div class="central-emblem-visual">
+          <img src="logo.png" alt="Pro Panda Studio Logo" id="v2-main-logo" />
+        </div>
+
+        <!-- Software Stack Icons (Pr, Ae, DaVinci Resolve, CapCut) -->
+        <div class="software-stack-row">
+          <!-- Premiere Pro -->
+          <div class="software-badge sw-icon--pr" title="Adobe Premiere Pro">
+            <span>Pr</span>
+            <span class="sw-tooltip">Premiere Pro</span>
+          </div>
+
+          <!-- After Effects -->
+          <div class="software-badge sw-icon--ae" title="Adobe After Effects">
+            <span>Ae</span>
+            <span class="sw-tooltip">After Effects</span>
+          </div>
+
+          <!-- DaVinci Resolve -->
+          <div class="software-badge sw-icon--dv" title="DaVinci Resolve">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12" stroke="#ff5533" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="12" r="4" fill="#ffaa00"/>
+              <path d="M16 6L20 10" stroke="#3388ff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="sw-tooltip">DaVinci Resolve</span>
+          </div>
+
+          <!-- CapCut -->
+          <div class="software-badge sw-icon--cc" title="CapCut Desktop">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+              <path d="M6 4L18 10L6 16V4Z" fill="#ffffff" opacity="0.9"/>
+              <path d="M18 14L6 20V16L18 10V14Z" fill="#ffffff" opacity="0.5"/>
+            </svg>
+            <span class="sw-tooltip">CapCut</span>
+          </div>
+        </div>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); margin-top: 18px;">
+          TIMELINE_ACCELERATION // 60FPS_PRORES
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Technical Divider -->
+  <div class="tech-divider">
+    <span>.project_showcase</span>
+    <span class="tech-divider__line"></span>
+    <span>RETENTION_TIMELINES</span>
+  </div>
+
+  <!-- ============================================================
+       SHOWCASE PORTFOLIO
+       ============================================================ -->
+  <section class="v2-showcase" id="showcase">
+    <div class="v2-section-head">
+      <div>
+        <span class="card-tag">Featured Works</span>
+        <h2 class="v2-title">Selected Project Timelines.</h2>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted);">
+        Short-Form &amp; Long-Form Cuts
+      </div>
+    </div>
+
+    <div class="v2-grid" id="v2-videos-container">
+      <!-- Injected by v2-main.js -->
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="v2-footer">
+    <div style="margin-bottom: 12px;">
+      <strong style="color: #fff; font-size: 14px;">PRO PANDA STUDIO</strong> — High Retention Video Architecture
+    </div>
+    <div>c 2026 Pro Panda. All Rights Reserved. Built with Precision.</div>
+  </footer>
+
+</div>
+
+<!-- Floating Navigation Dock -->
+<div class="v2-nav-float">
+  <a href="index.html" class="v2-nav-btn">Capsule Version</a>
+  <a href="#about" class="v2-nav-btn">About &amp; Stack</a>
+  <a href="#showcase" class="v2-nav-btn">Projects</a>
+  <a href="admin-v2.html" class="v2-nav-btn v2-nav-btn--primary">Admin Portal ⚙️</a>
+</div>
+
+<!-- Video Modal Player -->
+<div class="modal" id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:100; place-items:center;">
+  <div style="position:relative; width:min(90vw, 420px); aspect-ratio:9/16; background:#000; border-radius:16px; border:1px solid rgba(255,255,255,0.2); overflow:hidden;">
+    <button id="modal-close-btn" style="position:absolute; top:12px; right:12px; z-index:10; width:32px; height:32px; border-radius:50%; background:#222; color:#fff; font-size:16px;">✕</button>
+    <div id="modal-content" style="width:100%; height:100%;"></div>
+  </div>
+</div>
+
+<!-- Custom Precision Studio Cursor -->
+<div class="custom-cursor" id="v2-cursor" aria-hidden="true"></div>
+<div class="custom-cursor-dot" id="v2-cursor-dot" aria-hidden="true"></div>
+
+<script src="v2-main.js"></script>
+</body>
+</html>

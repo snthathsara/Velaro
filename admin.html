@@ -3,24 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pro Panda — Studio Control Portal</title>
+<title>Velaro — Studio Control Portal</title>
 <link rel="icon" type="image/png" href="logo.png" id="admin-favicon" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #09090b;
-    --panel: #111115;
-    --card: #16161b;
-    --card-hover: #1d1d23;
+    --bg: #07070a;
+    --panel: #111016;
+    --card: #17151e;
+    --card-hover: #1e1b27;
     --ink: #ffffff;
-    --ink-dim: #9494a0;
+    --ink-dim: #9491a0;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);
-    --border-red: rgba(220, 38, 38, 0.35);
-    --accent: #dc2626;
-    --accent-hover: #ef4444;
+    --border-gold: rgba(245, 158, 11, 0.35);
+    --accent: #f59e0b;
+    --accent-hover: #fbbf24;
+    --glow: rgba(245, 158, 11, 0.35);
     --radius: 14px;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -40,7 +41,7 @@
   /* Grid overlay */
   .grid-bg {
     position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: radial-gradient(rgba(255, 30, 56, 0.08) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 1px);
     background-size: 32px 32px;
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 40%, transparent 100%);
     mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 40%, transparent 100%);
@@ -61,8 +62,8 @@
     display: flex; align-items: center; gap: 12px;
     font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: 19px;
   }
-  .brand img { width: 30px; height: 30px; object-fit: contain; }
-  .brand-red { color: var(--accent); }
+  .brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+  .brand-gold { color: var(--accent); }
   .header-actions { display: flex; align-items: center; gap: 10px; }
   .nav-btn {
     font-size: 13.5px; font-weight: 600; color: var(--ink-dim);
@@ -74,18 +75,20 @@
 
   /* Auth Card & PIN Input */
   .auth-card {
-    background: var(--panel); border: 1px solid var(--border-red);
+    background: var(--panel); border: 1px solid var(--border-gold);
     border-radius: var(--radius); padding: 36px 28px;
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
     transition: transform .35s var(--ease), border-color .3s, opacity .35s;
     text-align: center;
   }
   .auth-icon {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--card); border: 1px solid var(--border);
-    display: grid; place-items: center; font-size: 24px;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #000; border: 1px solid var(--border-gold);
+    display: grid; place-items: center; overflow: hidden;
     margin: 0 auto 16px;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
   }
+  .auth-icon img { width: 100%; height: 100%; object-fit: cover; }
   .auth-card.is-shaking {
     animation: shakeAuth .45s var(--ease);
     border-color: #ef4444 !important;
@@ -145,7 +148,7 @@
   }
   .tab-btn:hover { color: #fff; border-color: var(--border-strong); background: var(--card-hover); }
   .tab-btn.is-active {
-    background: var(--accent); color: #ffffff;
+    background: var(--accent); color: #000000; font-weight: 700;
     border-color: transparent; box-shadow: 0 4px 16px var(--glow);
   }
 
@@ -171,12 +174,12 @@
 
   .btn {
     padding: 14px 22px; border-radius: 12px; border: 0;
-    font-family: "Inter Tight", sans-serif; font-weight: 700; font-size: 15px;
+    font-family: inherit; font-weight: 700; font-size: 15px;
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     transition: transform .2s, background .2s, box-shadow .2s; text-decoration: none;
   }
   .btn--primary {
-    background: var(--accent); color: #ffffff;
+    background: var(--accent); color: #000000;
     box-shadow: 0 8px 24px var(--glow); width: 100%;
   }
   .btn--primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 12px 30px var(--glow); }
@@ -198,13 +201,13 @@
   .status-opt:hover { background: var(--card-hover); border-color: var(--border-strong); }
   .status-opt.is-selected {
     border-color: var(--accent);
-    background: rgba(255, 30, 56, 0.08);
+    background: rgba(245, 158, 11, 0.08);
     box-shadow: 0 0 0 2px var(--accent);
   }
   .status-info { display: flex; align-items: center; gap: 14px; }
   .status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .dot--avail { background: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25); }
-  .dot--limited { background: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
+  .dot--avail { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25); }
+  .dot--limited { background: #f97316; box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25); }
   .dot--busy { background: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25); }
   .status-label { font-size: 16px; font-weight: 700; }
   .status-desc { font-size: 13px; color: var(--ink-dim); margin-top: 2px; }
@@ -213,7 +216,7 @@
     border: 2px solid var(--border-strong); display: grid; place-items: center;
   }
   .status-opt.is-selected .status-radio { border-color: var(--accent); background: var(--accent); }
-  .status-opt.is-selected .status-radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #ffffff; }
+  .status-opt.is-selected .status-radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #000000; }
 
   /* Live Preview Box */
   .preview-box {
@@ -235,8 +238,8 @@
     box-shadow: 0 4px 18px rgba(0,0,0,0.3);
     transition: all .3s var(--ease);
   }
-  .pill-preview.is-available .pill-preview__dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
-  .pill-preview.is-limited .pill-preview__dot { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .pill-preview.is-available .pill-preview__dot { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+  .pill-preview.is-limited .pill-preview__dot { background: #f97316; box-shadow: 0 0 12px #f97316; }
   .pill-preview.is-busy .pill-preview__dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
   .pill-preview__dot { width: 8px; height: 8px; border-radius: 50%; }
 
@@ -285,7 +288,7 @@
 
   .toast {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-    background: var(--accent); color: #ffffff; font-weight: 800; font-size: 14.5px;
+    background: var(--accent); color: #000000; font-weight: 800; font-size: 14.5px;
     padding: 12px 28px; border-radius: 100px; box-shadow: 0 10px 30px var(--glow);
     opacity: 0; pointer-events: none; transition: all .35s var(--ease); z-index: 100;
   }
@@ -307,8 +310,8 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.25);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid var(--border-gold);
     border-radius: 14px;
     padding: 14px 18px;
     margin-bottom: 22px;
@@ -348,8 +351,8 @@
 <div class="container">
   <header class="header">
     <div class="brand">
-      <img src="logo.png" alt="Pro Panda" id="admin-brand-logo" />
-      <span>Pro&nbsp;<span class="brand-red">Panda</span> Control</span>
+      <img src="logo.png" alt="Velaro" id="admin-brand-logo" />
+      <span>Velaro <span class="brand-gold">Control</span></span>
     </div>
     <div class="header-actions">
       <a href="index.html" class="nav-btn">← Live Portfolio</a>
@@ -359,9 +362,11 @@
 
   <!-- Step 1: Security PIN Input -->
   <section class="auth-card" id="auth-section">
-    <div class="auth-icon">🐼</div>
-    <h1 class="auth-title">Pro Panda Studio CMS</h1>
-    <p class="auth-sub">Enter security PIN (Default: <b>1111</b>) to manage availability, showcase videos, reviews, and styling.</p>
+    <div class="auth-icon">
+      <img src="logo.png" alt="Velaro" />
+    </div>
+    <h1 class="auth-title">Velaro Studio CMS</h1>
+    <p class="auth-sub">Enter security PIN (Default: <b>1111</b>) to manage availability, color palettes, and logo branding.</p>
 
     <form id="auth-form">
       <div class="pin-field-wrapper">
@@ -376,7 +381,7 @@
   <!-- Step 2: Main Studio Dashboard -->
   <section class="main-card" id="dashboard-section" style="display: none;">
     <nav class="tabs-bar" aria-label="Admin Sections">
-      <button class="tab-btn is-active" data-tab="status">🔴 Availability</button>
+      <button class="tab-btn is-active" data-tab="status">🟡 Availability</button>
       <button class="tab-btn" data-tab="palette">🎨 Colors</button>
       <button class="tab-btn" data-tab="branding">🖼️ Logo</button>
       <button class="tab-btn" data-tab="videos">🎬 Videos</button>
@@ -392,23 +397,23 @@
       </div>
 
       <div class="status-grid">
-        <div class="status-opt" data-state="available" data-default-text="Available for new projects">
+        <div class="status-opt is-selected" data-state="available" data-default-text="Available">
           <div class="status-info">
             <span class="status-dot dot--avail"></span>
             <div>
-              <div class="status-label">Available</div>
-              <div class="status-desc">Open for new video editing clients</div>
+              <div class="status-label">Available (Default)</div>
+              <div class="status-desc">Open for new video editing projects</div>
             </div>
           </div>
           <div class="status-radio"></div>
         </div>
 
-        <div class="status-opt is-selected" data-state="limited" data-default-text="2 Client Spots Available">
+        <div class="status-opt" data-state="limited" data-default-text="2 Slots Open">
           <div class="status-info">
             <span class="status-dot dot--limited"></span>
             <div>
-              <div class="status-label">Limited Slots (Recommended)</div>
-              <div class="status-desc">Creates urgency — 1 to 2 project spots remaining</div>
+              <div class="status-label">Limited Slots</div>
+              <div class="status-desc">Creates urgency — 1 to 2 client spots remaining</div>
             </div>
           </div>
           <div class="status-radio"></div>
@@ -435,33 +440,25 @@
         <label class="input-label">Flashing Dot Color</label>
         <p class="auth-sub" style="margin: 0 0 10px; font-size: 13px;">Pick any color for the pulsing status dot on the live website.</p>
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn--secondary status-color-preset" data-color="#f59e0b" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span> Amber (Velaro Gold)
+          </button>
           <button type="button" class="btn btn--secondary status-color-preset" data-color="#10b981" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
             <span style="width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span> Green (Available)
           </button>
-          <button type="button" class="btn btn--secondary status-color-preset" data-color="#f59e0b" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
-            <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span> Amber (Limited)
+          <button type="button" class="btn btn--secondary status-color-preset" data-color="#f97316" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#f97316;box-shadow:0 0 8px #f97316;"></span> Honey Orange
           </button>
           <button type="button" class="btn btn--secondary status-color-preset" data-color="#ef4444" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
             <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;"></span> Red (Booked)
           </button>
-          <button type="button" class="btn btn--secondary status-color-preset" data-color="#8b5cf6" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
-            <span style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;"></span> Purple
-          </button>
-          <button type="button" class="btn btn--secondary status-color-preset" data-color="#3b82f6" style="display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:13px;">
-            <span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 8px #3b82f6;"></span> Blue
-          </button>
-          
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="color" id="status-dot-color-picker" value="#10b981" style="width:36px;height:36px;padding:0;border:none;border-radius:6px;cursor:pointer;background:transparent;" />
-            <input type="text" id="status-dot-color-hex" class="input-field" value="#10b981" placeholder="#10b981" style="width:90px;margin:0;" />
-          </div>
         </div>
       </div>
 
       <div class="preview-box">
         <div class="preview-title">Live Website Badge Preview</div>
-        <div class="pill-preview is-limited" id="preview-pill">
-          <span class="pill-preview__dot" id="preview-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;"></span>
+        <div class="pill-preview is-available" id="preview-pill">
+          <span class="pill-preview__dot" id="preview-dot" style="background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span>
           <span id="preview-pill-text">Available</span>
         </div>
       </div>
@@ -478,44 +475,44 @@
 
       <div class="input-label">Curated Color Presets</div>
       <div class="presets-grid">
-        <button class="swatch-btn is-active" data-color="#ff1e38">
-          <span class="swatch-color" style="background: #ff1e38;"></span>
-          <span class="swatch-name">Crimson Red</span>
+        <button class="swatch-btn is-active" data-color="#f59e0b">
+          <span class="swatch-color" style="background: #f59e0b;"></span>
+          <span class="swatch-name">Golden Amber</span>
         </button>
-        <button class="swatch-btn" data-color="#ff5500">
-          <span class="swatch-color" style="background: #ff5500;"></span>
-          <span class="swatch-name">Cyber Amber</span>
+        <button class="swatch-btn" data-color="#d97706">
+          <span class="swatch-color" style="background: #d97706;"></span>
+          <span class="swatch-name">Honey Bronze</span>
         </button>
-        <button class="swatch-btn" data-color="#00f0ff">
-          <span class="swatch-color" style="background: #00f0ff;"></span>
-          <span class="swatch-name">Electric Cyan</span>
+        <button class="swatch-btn" data-color="#fbbf24">
+          <span class="swatch-color" style="background: #fbbf24;"></span>
+          <span class="swatch-name">Electric Gold</span>
         </button>
-        <button class="swatch-btn" data-color="#d8ff1f">
-          <span class="swatch-color" style="background: #d8ff1f;"></span>
-          <span class="swatch-name">Neon Lime</span>
-        </button>
-        <button class="swatch-btn" data-color="#10b981">
-          <span class="swatch-color" style="background: #10b981;"></span>
-          <span class="swatch-name">Emerald Boost</span>
+        <button class="swatch-btn" data-color="#f97316">
+          <span class="swatch-color" style="background: #f97316;"></span>
+          <span class="swatch-name">Warm Coral</span>
         </button>
         <button class="swatch-btn" data-color="#a855f7">
           <span class="swatch-color" style="background: #a855f7;"></span>
-          <span class="swatch-name">Hyper Violet</span>
+          <span class="swatch-name">Studio Violet</span>
+        </button>
+        <button class="swatch-btn" data-color="#ff1e38">
+          <span class="swatch-color" style="background: #ff1e38;"></span>
+          <span class="swatch-name">Crimson Red</span>
         </button>
       </div>
 
       <div class="input-label">Or Pick Custom Hex Color</div>
       <div class="color-picker-row">
-        <input type="color" id="palette-picker" value="#ff1e38" />
-        <input type="text" id="palette-hex" class="input-field" value="#ff1e38" placeholder="#ff1e38" style="margin: 0;" />
-        <button class="btn btn--secondary" id="reset-color-btn" style="white-space: nowrap;">Reset Red</button>
+        <input type="color" id="palette-picker" value="#f59e0b" />
+        <input type="text" id="palette-hex" class="input-field" value="#f59e0b" placeholder="#f59e0b" style="margin: 0;" />
+        <button class="btn btn--secondary" id="reset-color-btn" style="white-space: nowrap;">Reset Gold</button>
       </div>
 
       <div class="preview-box">
         <div class="preview-title">Color Accent Live Preview</div>
         <div style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap;">
           <span class="btn btn--primary" id="preview-color-btn" style="width: auto; pointer-events: none;">Book an Edit →</span>
-          <span style="font-size: 15px; font-weight: 700; color: #fff;">Pro Panda <span id="preview-hl" style="background: var(--accent); color: #ffffff; padding: 2px 8px; border-radius: 6px;">Cuts</span></span>
+          <span style="font-size: 15px; font-weight: 700; color: #fff;">Velaro <span id="preview-hl" style="background: var(--accent); color: #000000; padding: 2px 8px; border-radius: 6px;">Cuts</span></span>
         </div>
       </div>
 
@@ -526,7 +523,7 @@
     <div class="tab-pane" id="tab-branding">
       <div style="margin-bottom: 20px;">
         <h2 class="auth-title" style="font-size: 22px; margin: 0;">Branding &amp; Logo</h2>
-        <p class="auth-sub" style="margin: 4px 0 0;">Upload or link a custom logo image for Pro Panda.</p>
+        <p class="auth-sub" style="margin: 4px 0 0;">Upload or link a custom logo image for Velaro.</p>
       </div>
 
       <div class="upload-dropzone" id="logo-dropzone">
@@ -538,13 +535,13 @@
 
       <div class="input-group">
         <label class="input-label" for="logo-url-input">Or Enter Logo Image URL</label>
-        <input type="url" id="logo-url-input" class="input-field" placeholder="https://example.com/logo.png" />
+        <input type="url" id="logo-url-input" class="input-field" placeholder="logo.png" />
       </div>
 
       <div class="preview-box">
         <div class="preview-title">Current Logo Preview</div>
         <img src="logo.png" alt="Logo Preview" id="logo-preview-img" class="logo-preview-img" />
-        <button class="btn btn--secondary" id="reset-logo-btn" style="margin-top: 12px; font-size: 13px;">Reset to Default Shield Logo</button>
+        <button class="btn btn--secondary" id="reset-logo-btn" style="margin-top: 12px; font-size: 13px;">Reset to Default Golden Duck Logo</button>
       </div>
 
       <button class="btn btn--primary js-save-btn">Save Branding Changes 🚀</button>
@@ -584,7 +581,7 @@
         <div class="lock-banner__icon">🔒</div>
         <div>
           <div class="lock-banner__title">Reviews Module Locked</div>
-          <p class="lock-banner__desc">Adding, editing, and deleting client reviews is locked pending developer clearance. Verified testimonials remain active.</p>
+          <p class="lock-banner__desc">Adding, editing, and deleting client reviews is locked pending developer clearance. Verified vitrine testimonials remain active.</p>
         </div>
       </div>
 
@@ -606,93 +603,39 @@
       </div>
     </div>
 
-    <!-- TAB 6: SETTINGS (LOCKED) -->
+    <!-- TAB 6: SETTINGS (PIN LOCKED) -->
     <div class="tab-pane" id="tab-settings">
       <div class="lock-banner">
         <div class="lock-banner__icon">🔒</div>
         <div>
-          <div class="lock-banner__title">Security Configuration Locked</div>
-          <p class="lock-banner__desc">PIN modification is locked by the developer until final project release.</p>
+          <div class="lock-banner__title">Security PIN Modification Locked</div>
+          <p class="lock-banner__desc">Changing the administrator security PIN is locked pending developer clearance. The default PIN remains active.</p>
         </div>
       </div>
 
       <div style="margin-bottom: 20px;">
-        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Security PIN &amp; Access</h2>
-        <p class="auth-sub" style="margin: 4px 0 0;">Studio security access controls.</p>
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Admin Security Settings</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Manage master portal access PIN (Default: <b>1111</b>).</p>
       </div>
 
       <div class="input-group">
-        <label class="input-label" for="custom-pin-input">Change Security PIN (Locked)</label>
-        <input type="password" id="custom-pin-input" class="input-field is-locked-input" placeholder="•••• (PIN Modification Locked)" disabled />
+        <label class="input-label" for="custom-pin-input">Change Security PIN</label>
+        <input type="password" id="custom-pin-input" class="input-field is-locked-input" placeholder="••••" maxlength="10" value="1111" disabled />
       </div>
 
-      <button class="btn btn--primary is-locked-btn" disabled>Save Settings 🔒</button>
+      <button class="btn btn--primary js-save-btn is-locked-btn" disabled>Update Security PIN 🔒</button>
     </div>
+
   </section>
 </div>
 
-<!-- Add/Edit Video Modal -->
-<div class="admin-modal" id="video-modal">
-  <div class="admin-modal__card">
-    <h3 class="auth-title" id="video-modal-title" style="font-size: 20px;">Add Portfolio Video</h3>
-    <form id="video-form">
-      <input type="hidden" id="v-index" value="-1" />
-      <div class="input-group">
-        <label class="input-label" for="v-id">YouTube Video ID or Link</label>
-        <input type="text" id="v-id" class="input-field" placeholder="e.g. 8-21_9lF67E" required />
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="v-title">Video Title</label>
-        <input type="text" id="v-title" class="input-field" placeholder="e.g. Apex & Roblox Hook Edit" required />
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="v-tag">Category (Gaming, Talking head, Creator, Podcast)</label>
-        <input type="text" id="v-tag" class="input-field" placeholder="Gaming" required />
-      </div>
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-        <button type="button" class="btn btn--secondary" id="close-video-modal">Cancel</button>
-        <button type="submit" class="btn btn--primary" style="width: auto;">Save Video</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Add/Edit Review Modal -->
-<div class="admin-modal" id="review-modal">
-  <div class="admin-modal__card">
-    <h3 class="auth-title" id="review-modal-title" style="font-size: 20px;">Add Creator Review</h3>
-    <form id="review-form">
-      <input type="hidden" id="r-index" value="-1" />
-      <div class="input-group">
-        <label class="input-label" for="r-text">Review Quote</label>
-        <textarea id="r-text" class="input-field" rows="3" placeholder="e.g. Pro Panda turned our gaming clips into pure algorithm fuel." required></textarea>
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="r-name">Creator Name / Handle</label>
-        <input type="text" id="r-name" class="input-field" placeholder="e.g. Windpress" required />
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="r-role">Creator Role / Stats</label>
-        <input type="text" id="r-role" class="input-field" placeholder="e.g. 2.61M YouTube Creator" required />
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="r-ava">Avatar Image Link or Path</label>
-        <input type="text" id="r-ava" class="input-field" placeholder="assets/creators/windpress.jpg" value="assets/creators/windpress.jpg" />
-      </div>
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-        <button type="button" class="btn btn--secondary" id="close-review-modal">Cancel</button>
-        <button type="submit" class="btn btn--primary" style="width: auto;">Save Review</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="toast" id="toast">✓ Pro Panda changes published live!</div>
+<div class="toast" id="toast">✓ Velaro changes published live!</div>
 
 <script>
 (function () {
   "use strict";
   const DEFAULT_PIN = "1111";
+  const ADMIN_LOCKED_MODULES = true;
 
   const DEFAULT_VIDEOS = [
     { id: "sample-1", title: "Valorant & FPS Elimination Hook Cut", tag: "Gaming" },
@@ -706,12 +649,14 @@
   ];
 
   const DEFAULT_QUOTES = [
-    { text: "Pro Panda turned our gaming clips into pure algorithm fuel. Retention skyrocketed from 35% to 84%.", name: "Windpress", role: "2.61M YouTube Creator", ava: "assets/creators/windpress.jpg", stars: 5 },
-    { text: "Fast turnaround, insane sound design, and super reliable. My shorts have never performed better.", name: "Twezy", role: "739K YouTube Creator", ava: "assets/creators/twezy.jpg", stars: 5 },
-    { text: "Bro absolutely cooks every single timeline. Clean cuts, hilarious pacing, exactly what our audience loves.", name: "Vixerz", role: "52K Roblox Creator", ava: "assets/creators/vixerz.jpg", stars: 5 },
-    { text: "High quality edits finished rapidly. Clean subtitles, great zoom keyframing, 100% recommended.", name: "baldcutG", role: "25K YouTube Creator", ava: "assets/creators/baldcutg.jpg", stars: 5 },
-    { text: "Great communication, perfect aesthetic consistency, and flawless audio mixing on every video.", name: "Gena Mikaela", role: "Creator & Vlogger", ava: "assets/creators/genamikaela.jpg", stars: 5 },
-    { text: "Top-tier Roblox cuts and trolling hooks. Turned raw stream highlights into 1M+ view viral shorts.", name: "BraylienBlox", role: "Roblox Gaming Creator", ava: "assets/creators/braylienblox.jpg", stars: 5 }
+    { text: "Nice edits, fast worker, very good service.", name: "LemonGuy_2070", role: "Brand Owner", ava: "🍋", stars: 5 },
+    { text: "Nice edits, fast worker — would recommend him 100%.", name: "Bullo Producer", role: "Content Creator", ava: "🎵", stars: 5 },
+    { text: "Perfectly did my edit as I expected, great work. Would recommend to anyone looking for an editor.", name: "Carl J.", role: "Podcaster", ava: "🎙️", stars: 5 },
+    { text: "Perfect videos, fast edits, and high retention / sub conversion.", name: "Matty", role: "Content Creator", ava: "🚀", stars: 5 },
+    { text: "Edited a step-by-step cooking video for me. Great service, fast edits.", name: "Yeesh_24", role: "Creator", ava: "👨‍🍳", stars: 5 },
+    { text: "Very good edit — bro cooked, for real.", name: "Pibbs", role: "Gaming Creator", ava: "🎮", stars: 5 },
+    { text: "Needed captions and effects added — clean, fast, done in under an hour with everything I needed.", name: "LMGX", role: "Content Creator", ava: "🎬", stars: 5 },
+    { text: "High quality edit finished in about five minutes. Clean, professional and seriously fast.", name: "Morgan", role: "Content Creator", ava: "⚡", stars: 5 }
   ];
 
   const authSec = document.getElementById("auth-section");
@@ -722,27 +667,23 @@
   const toast = document.getElementById("toast");
 
   let currentState = "available";
-  let currentStatusDotColor = "#10b981";
-  let currentAccent = "#dc2626";
+  let currentStatusDotColor = "#f59e0b";
+  let currentAccent = "#f59e0b";
   let currentLogo = "logo.png";
   let currentVideos = [...DEFAULT_VIDEOS];
   let currentReviews = [...DEFAULT_QUOTES];
 
-  if (sessionStorage.getItem("propanda_admin_auth") === "true") {
+  if (sessionStorage.getItem("velaro_admin_auth") === "true") {
     showDashboard();
   }
 
   authForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const entered = pinInput.value.trim();
-    const customPin = localStorage.getItem("propanda_custom_pin");
-    const activePin = (customPin && customPin !== "2910") ? customPin : DEFAULT_PIN;
-    
-    if (entered === activePin || entered === "1111" || entered === DEFAULT_PIN) {
+    if (entered === "1111" || entered === DEFAULT_PIN) {
       document.getElementById("auth-err-msg").classList.remove("is-show");
       authSec.classList.add("is-success");
-      sessionStorage.setItem("propanda_admin_auth", "true");
-      localStorage.setItem("propanda_custom_pin", entered === "1111" ? "1111" : activePin);
+      sessionStorage.setItem("velaro_admin_auth", "true");
       setTimeout(() => {
         authSec.classList.remove("is-success");
         showDashboard();
@@ -757,7 +698,7 @@
   });
 
   lockBtn.addEventListener("click", () => {
-    sessionStorage.removeItem("propanda_admin_auth");
+    sessionStorage.removeItem("velaro_admin_auth");
     dashSec.style.display = "none";
     authSec.style.display = "block";
     lockBtn.style.display = "none";
@@ -790,7 +731,7 @@
 
   function loadAllCMSData() {
     try {
-      const savedStatus = JSON.parse(localStorage.getItem("propanda_status") || localStorage.getItem("flow_status"));
+      const savedStatus = JSON.parse(localStorage.getItem("velaro_status"));
       if (savedStatus) {
         currentState = savedStatus.state || "available";
         const statusTxt = document.getElementById("custom-status-text");
@@ -798,30 +739,21 @@
         if (savedStatus.dotColor) {
           setStatusDotColor(savedStatus.dotColor);
         } else {
-          setStatusDotColor(currentState === "busy" ? "#ef4444" : currentState === "limited" ? "#f59e0b" : "#10b981");
+          setStatusDotColor("#f59e0b");
         }
       } else {
-        setStatusDotColor("#10b981");
+        setStatusDotColor("#f59e0b");
       }
     } catch (e) {}
     selectStatusOption(currentState, false);
 
-    const savedAccent = localStorage.getItem("propanda_accent_color") || localStorage.getItem("flow_accent_color") || "#dc2626";
+    const savedAccent = localStorage.getItem("velaro_accent_color") || "#f59e0b";
     setAccent(savedAccent);
 
-    const savedLogo = localStorage.getItem("propanda_logo_url") || localStorage.getItem("flow_logo_url") || "logo.png";
+    const savedLogo = localStorage.getItem("velaro_logo_url") || "logo.png";
     setLogo(savedLogo);
 
-    try {
-      const savedV = JSON.parse(localStorage.getItem("propanda_videos_data") || localStorage.getItem("flow_videos_data"));
-      if (Array.isArray(savedV) && savedV.length) currentVideos = savedV;
-    } catch (e) {}
     renderVideoList();
-
-    try {
-      const savedR = JSON.parse(localStorage.getItem("propanda_testimonials_data") || localStorage.getItem("flow_testimonials_data"));
-      if (Array.isArray(savedR) && savedR.length) currentReviews = savedR;
-    } catch (e) {}
     renderReviewList();
   }
 
@@ -831,15 +763,10 @@
   const previewPill = document.getElementById("preview-pill");
   const previewPillText = document.getElementById("preview-pill-text");
   const previewDot = document.getElementById("preview-dot");
-  const statusDotPicker = document.getElementById("status-dot-color-picker");
-  const statusDotHex = document.getElementById("status-dot-color-hex");
   const statusColorPresets = document.querySelectorAll(".status-color-preset");
 
   function setStatusDotColor(hex) {
-    if (!hex) return;
     currentStatusDotColor = hex;
-    if (statusDotPicker) statusDotPicker.value = hex.startsWith("#") && hex.length === 7 ? hex : "#10b981";
-    if (statusDotHex) statusDotHex.value = hex;
     if (previewDot) {
       previewDot.style.background = hex;
       previewDot.style.boxShadow = `0 0 8px ${hex}`;
@@ -851,18 +778,6 @@
       setStatusDotColor(btn.dataset.color);
     });
   });
-
-  if (statusDotPicker) {
-    statusDotPicker.addEventListener("input", (e) => setStatusDotColor(e.target.value));
-  }
-  if (statusDotHex) {
-    statusDotHex.addEventListener("input", (e) => {
-      const val = e.target.value.trim();
-      if (val.startsWith("#") && (val.length === 4 || val.length === 7)) {
-        setStatusDotColor(val);
-      }
-    });
-  }
 
   statusOpts.forEach((opt) => {
     opt.addEventListener("click", () => {
@@ -876,7 +791,7 @@
     const selected = document.querySelector(`.status-opt[data-state="${state}"]`);
     if (updateInput && selected && customStatusText) {
       customStatusText.value = selected.dataset.defaultText;
-      const defaultColor = state === "busy" ? "#ef4444" : state === "limited" ? "#f59e0b" : "#10b981";
+      const defaultColor = state === "busy" ? "#ef4444" : state === "limited" ? "#f97316" : "#f59e0b";
       setStatusDotColor(defaultColor);
     }
     updatePillPreview();
@@ -904,7 +819,7 @@
     currentAccent = color;
     document.documentElement.style.setProperty("--accent", color);
     document.documentElement.style.setProperty("--glow", color + "44");
-    if (palettePicker) palettePicker.value = color.startsWith("#") && color.length === 7 ? color : "#dc2626";
+    if (palettePicker) palettePicker.value = color.startsWith("#") && color.length === 7 ? color : "#f59e0b";
     if (paletteHex) paletteHex.value = color;
     swatchBtns.forEach((b) => b.classList.toggle("is-active", b.dataset.color.toLowerCase() === color.toLowerCase()));
   }
@@ -918,7 +833,7 @@
     });
   }
   const resetColorBtn = document.getElementById("reset-color-btn");
-  if (resetColorBtn) resetColorBtn.addEventListener("click", () => setAccent("#dc2626"));
+  if (resetColorBtn) resetColorBtn.addEventListener("click", () => setAccent("#f59e0b"));
 
   // Branding handler
   const logoPreviewImg = document.getElementById("logo-preview-img");
@@ -950,196 +865,42 @@
   const resetLogoBtn = document.getElementById("reset-logo-btn");
   if (resetLogoBtn) resetLogoBtn.addEventListener("click", () => setLogo("logo.png"));
 
-  // Developer Module Lock (Set to false to unlock upon payment clearance)
-  const ADMIN_LOCKED_MODULES = true;
-
-  // Video Management
+  // Video Management (Locked)
   const videosList = document.getElementById("videos-list");
-  const videoModal = document.getElementById("video-modal");
-  const videoForm = document.getElementById("video-form");
-  const vIndex = document.getElementById("v-index");
-  const vId = document.getElementById("v-id");
-  const vTitle = document.getElementById("v-title");
-  const vTag = document.getElementById("v-tag");
-
   function renderVideoList() {
     if (!videosList) return;
     videosList.innerHTML = currentVideos.map((v, i) => `
       <div class="item-card">
-        <img class="item-thumb" src="${v.id && v.id.length === 11 ? 'https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg' : 'logo.png'}" alt="" onerror="this.src='logo.png'" />
+        <img src="logo.png" class="item-thumb" alt="${v.title}" />
         <div class="item-body">
-          <div class="item-title">${v.title || 'Untitled Video'}</div>
-          <div class="item-sub">${v.tag || 'General'} · ID: ${v.id || 'sample'}</div>
+          <div class="item-title">${v.title}</div>
+          <div class="item-sub">${v.tag} · 4K 60FPS</div>
         </div>
         <div class="item-actions">
-          <button type="button" class="btn btn--secondary ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-edit-video'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Edit' : 'Edit'}</button>
-          <button type="button" class="btn btn--danger ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-del-video'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Delete' : 'Delete'}</button>
+          <button type="button" class="btn btn--secondary is-locked-btn" disabled>🔒 Edit</button>
+          <button type="button" class="btn btn--danger is-locked-btn" disabled>🔒 Delete</button>
         </div>
       </div>
     `).join("");
-
-    if (!ADMIN_LOCKED_MODULES) {
-      document.querySelectorAll(".btn-edit-video").forEach((b) => {
-        b.addEventListener("click", () => openVideoModal(+b.dataset.idx));
-      });
-      document.querySelectorAll(".btn-del-video").forEach((b) => {
-        b.addEventListener("click", () => {
-          currentVideos.splice(+b.dataset.idx, 1);
-          renderVideoList();
-          saveAllData();
-        });
-      });
-    }
   }
 
-  function parseYouTubeId(input) {
-    const match = input.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
-    return match ? match[1] : input.trim();
-  }
-
-  function openVideoModal(idx = -1) {
-    if (ADMIN_LOCKED_MODULES) return;
-    if (!videoModal) return;
-    vIndex.value = idx;
-    if (idx >= 0) {
-      const v = currentVideos[idx];
-      vId.value = v.id;
-      vTitle.value = v.title;
-      vTag.value = v.tag;
-      document.getElementById("video-modal-title").textContent = "Edit Portfolio Video";
-    } else {
-      vId.value = "";
-      vTitle.value = "";
-      vTag.value = "Gaming";
-      document.getElementById("video-modal-title").textContent = "Add Portfolio Video";
-    }
-    videoModal.classList.add("is-open");
-  }
-
-  const addVideoBtn = document.getElementById("add-video-btn");
-  if (addVideoBtn && !ADMIN_LOCKED_MODULES) addVideoBtn.addEventListener("click", () => openVideoModal(-1));
-  const closeVideoModalBtn = document.getElementById("close-video-modal");
-  if (closeVideoModalBtn && videoModal) closeVideoModalBtn.addEventListener("click", () => videoModal.classList.remove("is-open"));
-
-  if (videoForm && !ADMIN_LOCKED_MODULES) {
-    videoForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const id = parseYouTubeId(vId.value);
-      const title = vTitle.value.trim();
-      const tag = vTag.value.trim();
-      const idx = +vIndex.value;
-      if (idx >= 0) {
-        currentVideos[idx] = { id, title, tag };
-      } else {
-        currentVideos.unshift({ id, title, tag });
-      }
-      videoModal.classList.remove("is-open");
-      renderVideoList();
-      saveAllData();
-    });
-  }
-
-  const resetVideosBtn = document.getElementById("reset-videos-btn");
-  if (resetVideosBtn && !ADMIN_LOCKED_MODULES) {
-    resetVideosBtn.addEventListener("click", () => {
-      currentVideos = [...DEFAULT_VIDEOS];
-      renderVideoList();
-      saveAllData();
-    });
-  }
-
-  // Reviews Management
+  // Reviews Management (Locked)
   const reviewsList = document.getElementById("reviews-list");
-  const reviewModal = document.getElementById("review-modal");
-  const reviewForm = document.getElementById("review-form");
-  const rIndex = document.getElementById("r-index");
-  const rText = document.getElementById("r-text");
-  const rName = document.getElementById("r-name");
-  const rRole = document.getElementById("r-role");
-  const rAva = document.getElementById("r-ava");
-
   function renderReviewList() {
     if (!reviewsList) return;
     reviewsList.innerHTML = currentReviews.map((r, i) => `
       <div class="item-card">
-        <div style="font-size: 24px; flex-shrink: 0; width: 40px; text-align: center;">💬</div>
+        <div style="font-size: 24px; flex-shrink: 0; width: 40px; text-align: center;">${r.ava || '⭐'}</div>
         <div class="item-body">
           <div class="item-title">${r.name} (${r.role})</div>
           <div class="item-sub">"${r.text}"</div>
         </div>
         <div class="item-actions">
-          <button type="button" class="btn btn--secondary ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-edit-review'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Edit' : 'Edit'}</button>
-          <button type="button" class="btn btn--danger ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-del-review'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Delete' : 'Delete'}</button>
+          <button type="button" class="btn btn--secondary is-locked-btn" disabled>🔒 Edit</button>
+          <button type="button" class="btn btn--danger is-locked-btn" disabled>🔒 Delete</button>
         </div>
       </div>
     `).join("");
-
-    if (!ADMIN_LOCKED_MODULES) {
-      document.querySelectorAll(".btn-edit-review").forEach((b) => {
-        b.addEventListener("click", () => openReviewModal(+b.dataset.idx));
-      });
-      document.querySelectorAll(".btn-del-review").forEach((b) => {
-        b.addEventListener("click", () => {
-          currentReviews.splice(+b.dataset.idx, 1);
-          renderReviewList();
-          saveAllData();
-        });
-      });
-    }
-  }
-
-  function openReviewModal(idx = -1) {
-    if (ADMIN_LOCKED_MODULES) return;
-    if (!reviewModal) return;
-    rIndex.value = idx;
-    if (idx >= 0) {
-      const r = currentReviews[idx];
-      rText.value = r.text;
-      rName.value = r.name;
-      rRole.value = r.role;
-      rAva.value = r.ava || "";
-      document.getElementById("review-modal-title").textContent = "Edit Creator Review";
-    } else {
-      rText.value = "";
-      rName.value = "";
-      rRole.value = "";
-      rAva.value = "assets/creators/windpress.jpg";
-      document.getElementById("review-modal-title").textContent = "Add Creator Review";
-    }
-    reviewModal.classList.add("is-open");
-  }
-
-  const addReviewBtn = document.getElementById("add-review-btn");
-  if (addReviewBtn && !ADMIN_LOCKED_MODULES) addReviewBtn.addEventListener("click", () => openReviewModal(-1));
-  const closeReviewModalBtn = document.getElementById("close-review-modal");
-  if (closeReviewModalBtn && reviewModal) closeReviewModalBtn.addEventListener("click", () => reviewModal.classList.remove("is-open"));
-
-  if (reviewForm && !ADMIN_LOCKED_MODULES) {
-    reviewForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = rText.value.trim();
-      const name = rName.value.trim();
-      const role = rRole.value.trim();
-      const ava = rAva.value.trim();
-      const idx = +rIndex.value;
-      if (idx >= 0) {
-        currentReviews[idx] = { text, name, role, ava, stars: 5 };
-      } else {
-        currentReviews.unshift({ text, name, role, ava, stars: 5 });
-      }
-      reviewModal.classList.remove("is-open");
-      renderReviewList();
-      saveAllData();
-    });
-  }
-
-  const resetReviewsBtn = document.getElementById("reset-reviews-btn");
-  if (resetReviewsBtn && !ADMIN_LOCKED_MODULES) {
-    resetReviewsBtn.addEventListener("click", () => {
-      currentReviews = [...DEFAULT_QUOTES];
-      renderReviewList();
-      saveAllData();
-    });
   }
 
   // Save All and Toast
@@ -1147,33 +908,17 @@
     const statusData = { 
       state: currentState, 
       text: customStatusText ? customStatusText.value.trim() : "Available",
-      dotColor: currentStatusDotColor || "#10b981"
+      dotColor: currentStatusDotColor || "#f59e0b"
     };
-    localStorage.setItem("propanda_status", JSON.stringify(statusData));
-    localStorage.setItem("flow_status", JSON.stringify(statusData));
+    localStorage.setItem("velaro_status", JSON.stringify(statusData));
+    localStorage.setItem("velaro_accent_color", currentAccent);
+    localStorage.setItem("velaro_logo_url", currentLogo);
 
-    localStorage.setItem("propanda_accent_color", currentAccent);
-    localStorage.setItem("flow_accent_color", currentAccent);
-
-    localStorage.setItem("propanda_logo_url", currentLogo);
-    localStorage.setItem("flow_logo_url", currentLogo);
-
-    if (!ADMIN_LOCKED_MODULES) {
-      localStorage.setItem("propanda_videos_data", JSON.stringify(currentVideos));
-      localStorage.setItem("flow_videos_data", JSON.stringify(currentVideos));
-
-      localStorage.setItem("propanda_testimonials_data", JSON.stringify(currentReviews));
-      localStorage.setItem("flow_testimonials_data", JSON.stringify(currentReviews));
-
-      const customPinEl = document.getElementById("custom-pin-input");
-      if (customPinEl && !customPinEl.disabled) {
-        const newPin = customPinEl.value.trim();
-        if (newPin && newPin.length >= 4) {
-          localStorage.setItem("propanda_custom_pin", newPin);
-          localStorage.setItem("flow_custom_pin", newPin);
-        }
-      }
-    }
+    // Clean up any stale old brand keys from localStorage
+    localStorage.removeItem("propanda_accent_color");
+    localStorage.removeItem("propanda_status");
+    localStorage.removeItem("flow_accent_color");
+    localStorage.removeItem("flow_status");
 
     if (toast) {
       toast.classList.add("is-show");

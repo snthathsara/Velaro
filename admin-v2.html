@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Panda V2 — Studio Control Panel</title>
+  <link rel="icon" href="logo.png" />
+  <link rel="stylesheet" href="v2-styles.css" />
+  <style>
+    .admin-wrap { max-width: 800px; margin: 40px auto 80px; padding: 0 20px; position: relative; z-index: 5; }
+    .admin-card { background: rgba(14, 14, 18, 0.95); backdrop-filter: blur(28px); border: 1.5px dashed rgba(255, 30, 56, 0.35); border-radius: 12px; padding: 36px 30px; position: relative; }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .admin-tab-btn { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--ink-dim); transition: all .2s; }
+    .admin-tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+    .admin-tab-btn.is-active { background: var(--accent); color: #fff; font-weight: 700; box-shadow: 0 0 16px var(--accent-glow); }
+    .pane { display: none; }
+    .pane.is-active { display: block; }
+    .input-grp { margin-bottom: 20px; }
+    .input-lbl { display: block; font-family: "JetBrains Mono", monospace; font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .input-ctrl { width: 100%; background: #070709; border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px 16px; color: #fff; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s; }
+    .input-ctrl:focus { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+    .save-btn { background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; margin-top: 10px; box-shadow: 0 4px 16px rgba(255, 30, 56, 0.35); }
+    .save-btn:hover { background: var(--accent-hover); box-shadow: 0 6px 22px var(--accent-glow); transform: translateY(-2px); }
+    .lock-box { display: flex; align-items: center; gap: 12px; background: rgba(255, 30, 56, 0.1); border: 1px solid rgba(255, 30, 56, 0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #fca5a5; }
+    .toast-msg { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; font-weight: 800; font-size: 13px; font-family: "JetBrains Mono", monospace; padding: 10px 24px; border-radius: 100px; opacity: 0; pointer-events: none; transition: all .3s var(--ease); z-index: 100; box-shadow: 0 6px 20px rgba(255, 30, 56, 0.4); }
+    .toast-msg.is-show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="dot-grid" aria-hidden="true"></div>
+<div class="top-spotlight" aria-hidden="true"></div>
+
+<div class="admin-wrap">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+      <h1 style="font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin: 0;">PRO PANDA V2 CONTROL</h1>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted); margin: 4px 0 0;">Dedicated CMS for Bounding-Box Studio Version</p>
+    </div>
+    <a href="v2.html" class="hero-pill-btn" style="font-size: 12px; padding: 6px 14px;">← View V2 Live</a>
+  </div>
+
+  <!-- AUTH FORM (PIN: 1111) -->
+  <div id="auth-box" class="admin-card" style="text-align: center; max-width: 440px; margin: 40px auto;">
+    <span class="handle handle--tl"></span>
+    <span class="handle handle--tr"></span>
+    <span class="handle handle--bl"></span>
+    <span class="handle handle--br"></span>
+    <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
+    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Studio Security Access</h2>
+    <p style="font-size: 13px; color: var(--ink-dim); margin-bottom: 24px;">Enter PIN to manage V2 studio configuration.</p>
+    <form id="pin-form">
+      <input type="password" id="pin-val" class="input-ctrl" placeholder="Enter PIN (Default: 1111)" style="text-align: center; letter-spacing: 4px; font-size: 18px; margin-bottom: 16px;" required autofocus />
+      <button type="submit" class="save-btn" style="width: 100%;">Unlock Dashboard</button>
+    </form>
+    <div id="err-text" style="color: var(--accent); font-size: 12px; margin-top: 12px; display: none;">Invalid PIN. Please try again.</div>
+  </div>
+
+  <!-- DASHBOARD SECTION -->
+  <div id="dash-box" class="admin-card" style="display: none;">
+    <!-- 4 Transform Handles -->
+    <span class="handle handle--tl"></span>
+    <span class="handle handle--tr"></span>
+    <span class="handle handle--bl"></span>
+    <span class="handle handle--br"></span>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-tabs">
+      <button class="admin-tab-btn is-active" data-pane="about">01 / About Bio</button>
+      <button class="admin-tab-btn" data-pane="pipeline">02 / Pipeline Steps</button>
+      <button class="admin-tab-btn" data-pane="software">03 / Software Stack</button>
+      <button class="admin-tab-btn" data-pane="brand">04 / Logo &amp; Brand</button>
+      <button class="admin-tab-btn" data-pane="videos">05 / Videos (Locked)</button>
+    </nav>
+
+    <!-- PANE 1: ABOUT BIO -->
+    <div class="pane is-active" id="pane-about">
+      <div class="input-grp">
+        <label class="input-lbl" for="bio-title">About Title Headline</label>
+        <input type="text" id="bio-title" class="input-ctrl" value="High-retention short-form and long-form video architecture for scaling channels." />
+      </div>
+      <div class="input-grp">
+        <label class="input-lbl" for="bio-desc">About Description (HTML supported)</label>
+        <textarea id="bio-desc" class="input-ctrl" rows="4">We transform raw footage into <span class="about-highlight">algorithm-ready</span> content. Specializing in fast pacing, custom sound design stacks, dynamic 3D keyframe zooms, and viral retention engineering that increases Average View Duration.</textarea>
+      </div>
+      <button class="save-btn js-save">Save Bio Content 🚀</button>
+    </div>
+
+    <!-- PANE 2: PIPELINE STEPS -->
+    <div class="pane" id="pane-pipeline">
+      <p style="font-size: 13px; color: var(--ink-dim); margin-bottom: 20px;">Customize the numbered service badges displayed on the homepage (1 through 5).</p>
+      <div class="input-grp">
+        <label class="input-lbl">Step 1</label>
+        <input type="text" id="pipe-1" class="input-ctrl" value="Hook Extraction" />
+      </div>
+      <div class="input-grp">
+        <label class="input-lbl">Step 2</label>
+        <input type="text" id="pipe-2" class="input-ctrl" value="Kinetic Subtitles" />
+      </div>
+      <div class="input-grp">
+        <label class="input-lbl">Step 3</label>
+        <input type="text" id="pipe-3" class="input-ctrl" value="Sound Design Stack" />
+      </div>
+      <div class="input-grp">
+        <label class="input-lbl">Step 4</label>
+        <input type="text" id="pipe-4" class="input-ctrl" value="Color &amp; Motion FX" />
+      </div>
+      <div class="input-grp">
+        <label class="input-lbl">Step 5 (Highlight)</label>
+        <input type="text" id="pipe-5" class="input-ctrl" value="24-48h Delivery" />
+      </div>
+      <button class="save-btn js-save">Save Pipeline Steps 🚀</button>
+    </div>
+
+    <!-- PANE 3: SOFTWARE STACK -->
+    <div class="pane" id="pane-software">
+      <p style="font-size: 13px; color: var(--ink-dim); margin-bottom: 20px;">The active editing suite is configured as:</p>
+      <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+        <li style="display: flex; align-items: center; gap: 10px; background: #0c0c10; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="color: #9999ff; font-weight: 700;">[ Pr ]</span> Adobe Premiere Pro — Timeline Cutting &amp; Audio Leveling
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px; background: #0c0c10; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="color: #d291ff; font-weight: 700;">[ Ae ]</span> Adobe After Effects — Kinetic Typography &amp; 3D Keyframing
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px; background: #0c0c10; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="color: #ffaa00; font-weight: 700;">[ DV ]</span> DaVinci Resolve — Color Normalization &amp; HDR Grading
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px; background: #0c0c10; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="color: #ffffff; font-weight: 700;">[ CC ]</span> CapCut Desktop — Fast Hook Acceleration &amp; 9:16 Cropping
+        </li>
+      </ul>
+      <div style="font-size: 12px; color: var(--neon); margin-top: 16px;">✓ All 4 software modules active on V2 site</div>
+    </div>
+
+    <!-- PANE 4: BRANDING -->
+    <div class="pane" id="pane-brand">
+      <div class="input-grp">
+        <label class="input-lbl" for="v2-logo-url">Logo Image URL</label>
+        <input type="text" id="v2-logo-url" class="input-ctrl" placeholder="logo.png" />
+      </div>
+      <div style="text-align: center; margin: 20px 0;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); margin-bottom: 8px;">PREVIEW</div>
+        <img src="logo.png" alt="Preview" id="v2-admin-logo-prev" style="width: 80px; height: 80px; object-fit: contain; margin: 0 auto;" />
+      </div>
+      <button class="save-btn js-save">Save Branding 🚀</button>
+    </div>
+
+    <!-- PANE 5: VIDEOS (LOCKED) -->
+    <div class="pane" id="pane-videos">
+      <div class="lock-box">
+        <span style="font-size: 20px;">🔒</span>
+        <div><strong>Video Management Locked</strong><br/>Video editing is protected pending developer clearance.</div>
+      </div>
+      <p style="font-size: 13px; color: var(--ink-dim);">Existing portfolio projects remain fully operational on the V2 live showcase.</p>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast-msg">CHANGES PUBLISHED TO V2 SITE 🚀</div>
+
+<script>
+(function() {
+  "use strict";
+  const authBox = document.getElementById("auth-box");
+  const dashBox = document.getElementById("dash-box");
+  const pinForm = document.getElementById("pin-form");
+  const pinVal = document.getElementById("pin-val");
+  const errText = document.getElementById("err-text");
+  const toast = document.getElementById("toast");
+
+  if (sessionStorage.getItem("propanda_v2_auth") === "true") {
+    showDash();
+  }
+
+  pinForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const pin = pinVal.value.trim();
+    if (pin === "1111" || pin === (localStorage.getItem("propanda_custom_pin") || "1111")) {
+      sessionStorage.setItem("propanda_v2_auth", "true");
+      showDash();
+    } else {
+      errText.style.display = "block";
+      pinVal.value = "";
+    }
+  });
+
+  function showDash() {
+    authBox.style.display = "none";
+    dashBox.style.display = "block";
+    loadDash();
+  }
+
+  // Tabs
+  const tabBtns = document.querySelectorAll(".admin-tab-btn");
+  const panes = document.querySelectorAll(".pane");
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("is-active"));
+      panes.forEach(p => p.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const target = document.getElementById(`pane-${btn.dataset.pane}`);
+      if (target) target.classList.add("is-active");
+    });
+  });
+
+  function loadDash() {
+    const savedAbout = localStorage.getItem("propanda_v2_about");
+    if (savedAbout) {
+      try {
+        const ab = JSON.parse(savedAbout);
+        if (ab.title) document.getElementById("bio-title").value = ab.title;
+        if (ab.desc) document.getElementById("bio-desc").value = ab.desc;
+      } catch(e) {}
+    }
+
+    const savedPipe = localStorage.getItem("propanda_v2_pipeline");
+    if (savedPipe) {
+      try {
+        const p = JSON.parse(savedPipe);
+        if (p[0]) document.getElementById("pipe-1").value = p[0].title;
+        if (p[1]) document.getElementById("pipe-2").value = p[1].title;
+        if (p[2]) document.getElementById("pipe-3").value = p[2].title;
+        if (p[3]) document.getElementById("pipe-4").value = p[3].title;
+        if (p[4]) document.getElementById("pipe-5").value = p[4].title;
+      } catch(e) {}
+    }
+
+    const savedLogo = localStorage.getItem("propanda_logo_url") || "logo.png";
+    const logoInput = document.getElementById("v2-logo-url");
+    const logoPrev = document.getElementById("v2-admin-logo-prev");
+    if (logoInput) logoInput.value = savedLogo;
+    if (logoPrev) logoPrev.src = savedLogo;
+  }
+
+  function saveAll() {
+    const aboutData = {
+      title: document.getElementById("bio-title").value.trim(),
+      desc: document.getElementById("bio-desc").value.trim()
+    };
+    localStorage.setItem("propanda_v2_about", JSON.stringify(aboutData));
+
+    const pipeData = [
+      { num: "1", title: document.getElementById("pipe-1").value.trim(), color: "red" },
+      { num: "2", title: document.getElementById("pipe-2").value.trim(), color: "red" },
+      { num: "3", title: document.getElementById("pipe-3").value.trim(), color: "red" },
+      { num: "4", title: document.getElementById("pipe-4").value.trim(), color: "red" },
+      { num: "5", title: document.getElementById("pipe-5").value.trim(), color: "solid" }
+    ];
+    localStorage.setItem("propanda_v2_pipeline", JSON.stringify(pipeData));
+
+    const logoUrl = document.getElementById("v2-logo-url").value.trim();
+    if (logoUrl) {
+      localStorage.setItem("propanda_logo_url", logoUrl);
+      const logoPrev = document.getElementById("v2-admin-logo-prev");
+      if (logoPrev) logoPrev.src = logoUrl;
+    }
+
+    toast.classList.add("is-show");
+    setTimeout(() => toast.classList.remove("is-show"), 2500);
+  }
+
+  document.querySelectorAll(".js-save").forEach(b => b.addEventListener("click", saveAll));
+})();
+</script>
+</body>
+</html>

@@ -3,21 +3,30 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pro Panda — Elite Video Editing Studio</title>
-<meta name="description" content="Pro Panda builds high-retention video editing systems for top creators, gaming channels, and brands. Long-form and short-form video architecture." />
+<title>Velaro — Video Editing Studio</title>
+<meta name="description" content="Velaro builds high-retention video editing systems for creators, brands, and channels. Long-form and short-form video architecture." />
 <link rel="icon" type="image/png" href="logo.png" id="site-favicon" />
 
 <!-- Theme & Accent setup -->
 <script>
   (function () {
     try {
-      var t = localStorage.getItem('propanda-theme') || localStorage.getItem('flow-theme');
-      if (!t) t = 'dark';
+      // Purge legacy red theme keys from previous sessions
+      localStorage.removeItem('propanda_accent_color');
+      localStorage.removeItem('propanda_status');
+      localStorage.removeItem('propanda_testimonials_data');
+      localStorage.removeItem('propanda_videos_data');
+      localStorage.removeItem('flow_accent_color');
+      localStorage.removeItem('flow_status');
+
+      var t = localStorage.getItem('velaro-theme') || 'dark';
       document.documentElement.setAttribute('data-theme', t);
-      var accent = localStorage.getItem('propanda_accent_color') || localStorage.getItem('flow_accent_color');
-      if (accent) {
-        document.documentElement.style.setProperty('--accent', accent);
+      var accent = localStorage.getItem('velaro_accent_color');
+      if (!accent || accent === '#ff1e38' || accent === '#dc2626') {
+        accent = '#f59e0b';
+        localStorage.setItem('velaro_accent_color', '#f59e0b');
       }
+      document.documentElement.style.setProperty('--accent', accent);
     } catch (e) {}
   })();
 </script>
@@ -29,23 +38,19 @@
 </head>
 <body>
 
-<!-- Ambient Refractive Glass Glow Orbs -->
-<div class="ambient-glow" aria-hidden="true">
-  <div class="glow-orb glow-orb--1"></div>
-  <div class="glow-orb glow-orb--2"></div>
-  <div class="glow-orb glow-orb--3"></div>
-</div>
+<!-- Ambient Subtle Warm Golden Background Atmosphere -->
+<div class="ambient-glow" aria-hidden="true"></div>
 
 <!-- ============ FLOATING CAPSULE NAVIGATION ============ -->
 <header class="nav-capsule-wrapper" id="nav-capsule-wrapper">
   <div class="nav-capsule" id="nav">
     <!-- Brand Info (Left) -->
-    <a href="#home" class="brand-capsule" aria-label="Pro Panda Home">
+    <a href="#home" class="brand-capsule" aria-label="Velaro Home">
       <div class="brand-capsule__logo">
-        <img src="logo.png" alt="Pro Panda" class="brand__mark" />
+        <img src="logo.png" alt="Velaro" class="brand__mark" id="nav-brand-logo" />
       </div>
       <div class="brand-capsule__text">
-        <div class="brand-capsule__title">Pro Panda <span class="brand-plus">+</span></div>
+        <div class="brand-capsule__title">Velaro <span class="brand-plus">+</span></div>
         <div class="brand-capsule__sub">editing studio</div>
       </div>
     </a>
@@ -135,12 +140,12 @@
     </div>
 
     <h1 class="hero__title">
-      Pro Panda builds <br />
+      Velaro builds <br />
       <span class="rotator-text" id="rotator-text">high-retention</span> video systems.
     </h1>
 
     <p class="hero__sub">
-      Precision video editing for high-growth creators and gaming channels. We craft surgical hooks, long-form pacing, sound design, and retention graphics that keep viewers watching until the last frame.
+      Precision video editing for modern creators, gaming channels, and brands. Surgical hooks, long-form narrative pacing, custom sound design stacks, and graphics that keep audiences engaged.
     </p>
 
     <div class="hero__cta">
@@ -148,254 +153,287 @@
         Book an Edit <span aria-hidden="true">→</span>
       </button>
       <a href="#showcase" class="btn btn--dark btn--lg">
-        View Selected Work
+        View Showcase
       </a>
     </div>
-  </div>
 
-  <!-- Hero Video Card Deck -->
-  <div class="deck reveal" id="deck" aria-label="Portfolio preview deck">
-    <!-- Populated by JS -->
+    <!-- Interactive Deck Visualizer -->
+    <div class="deck" id="hero-deck" aria-label="Preview video frames">
+      <div class="deck__card deck__card--l">
+        <img src="logo.png" alt="Edit Reel Preview 1" />
+        <div class="deck__overlay"></div>
+      </div>
+      <div class="deck__card deck__card--c">
+        <img src="logo.png" alt="Edit Reel Preview Active" />
+        <div class="deck__overlay"></div>
+        <div class="deck__play" aria-hidden="true">▶</div>
+      </div>
+      <div class="deck__card deck__card--r">
+        <img src="logo.png" alt="Edit Reel Preview 2" />
+        <div class="deck__overlay"></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ============ PAST CLIENTS ROSTER & REVIEWS SECTION ============ -->
+<!-- ============ CLIENT ROSTER & REVIEWS SECTION ============ -->
 <section class="clients-section" id="roster">
   <div class="wrap">
-    <div class="clients-head reveal">
-      <span class="clients-head__label">
-        Trusted by 3.4M+ Subscribers across Top Creators
-      </span>
+    <div class="clients-head">
+      <span class="clients-head__label">Trusted by Leading Creators &amp; Channels</span>
     </div>
 
-    <div class="clients-grid reveal-stagger">
-      <!-- Windpress -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/windpress.jpg" alt="Windpress" class="client-chip__avatar" onerror="this.src='logo.png'" />
+    <!-- Client Chips Grid (Vitrine Verified Clients) -->
+    <div class="clients-grid reveal-stagger" id="clients-container">
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">🍋</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">Windpress</span>
-          <span class="client-chip__subs">2.61M Subs</span>
-          <span class="client-chip__tag">Animation &amp; Gaming</span>
+          <span class="client-chip__name">LemonGuy_2070</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Brand Owner</span>
         </div>
       </div>
-
-      <!-- Twezy -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/twezy.jpg" alt="Twezy" class="client-chip__avatar" onerror="this.src='logo.png'" />
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">🎵</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">Twezy</span>
-          <span class="client-chip__subs">739K Subs</span>
-          <span class="client-chip__tag">Fortnite &amp; Shorts</span>
+          <span class="client-chip__name">Bullo Producer</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Content Creator</span>
         </div>
       </div>
-
-      <!-- Vixerz -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/vixerz.jpg" alt="Vixerz" class="client-chip__avatar" onerror="this.src='logo.png'" />
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">🎙️</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">Vixerz</span>
-          <span class="client-chip__subs">52.4K Subs</span>
-          <span class="client-chip__tag">Roblox &amp; Viral Clips</span>
+          <span class="client-chip__name">Carl J.</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Podcaster</span>
         </div>
       </div>
-
-      <!-- baldcutG -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/baldcutg.jpg" alt="baldcutG" class="client-chip__avatar" onerror="this.src='logo.png'" />
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">🚀</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">baldcutG</span>
-          <span class="client-chip__subs">25K Subs</span>
-          <span class="client-chip__tag">Gaming &amp; Reactions</span>
+          <span class="client-chip__name">Matty</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Content Creator</span>
         </div>
       </div>
-
-      <!-- Gena Mikaela -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/genamikaela.jpg" alt="Gena Mikaela" class="client-chip__avatar" onerror="this.src='logo.png'" />
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">👨‍🍳</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">Gena Mikaela</span>
-          <span class="client-chip__subs">9.1K Subs</span>
-          <span class="client-chip__tag">Talking Head &amp; Vlog</span>
+          <span class="client-chip__name">Yeesh_24</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Lifestyle Creator</span>
         </div>
       </div>
-
-      <!-- BraylienBlox -->
-      <div class="client-chip tilt-card">
-        <img src="assets/creators/braylienblox.jpg" alt="BraylienBlox" class="client-chip__avatar" onerror="this.src='logo.png'" />
+      <div class="client-chip">
+        <span class="client-chip__avatar" style="display:grid;place-items:center;font-size:18px;">🎮</span>
         <div class="client-chip__info">
-          <span class="client-chip__name">BraylienBlox</span>
-          <span class="client-chip__subs">Creator</span>
-          <span class="client-chip__tag">Roblox Shorts</span>
+          <span class="client-chip__name">Pibbs</span>
+          <span class="client-chip__subs">⭐ 5.0 Rating</span>
+          <span class="client-chip__tag">Gaming Creator</span>
         </div>
       </div>
     </div>
 
-    <!-- Proof Metrics -->
-    <div class="stats-grid reveal-stagger" style="margin-top: 48px;">
-      <div class="stat-box tilt-card">
-        <div class="stat__num" data-count="200" data-suffix="M+">0</div>
-        <div class="stat__label">Views Generated</div>
+    <!-- Verified Client Reviews Carousel (From YTJobs Vitrine) -->
+    <div style="margin-top: 54px;">
+      <div class="section-head reveal" style="margin-bottom: 26px;">
+        <span class="eyebrow">Verified Vitrine Reviews</span>
+        <h3 style="font-size: 26px; font-weight: 700;">What Creators &amp; Clients Say</h3>
       </div>
-      <div class="stat-box tilt-card">
-        <div class="stat__num" data-count="380" data-prefix="+" data-suffix="%">0</div>
-        <div class="stat__label">Average Watch Time Boost</div>
+      
+      <div class="tmarquee" id="quotes-container">
+        <!-- Rendered dynamically by main.js with 8 authentic vitrine reviews -->
       </div>
-      <div class="stat-box tilt-card">
-        <div class="stat__num" data-count="500" data-suffix="+">0</div>
-        <div class="stat__label">Videos Delivered</div>
-      </div>
-      <div class="stat-box tilt-card">
-        <div class="stat__num" data-count="99" data-suffix=".4%">0</div>
-        <div class="stat__label">On-Time Delivery Rate</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- REVIEWS MARQUEE (Right below client roster) -->
-  <div style="margin-top: 56px;">
-    <div class="wrap">
-      <div class="section-head reveal" style="margin-bottom: 24px;">
-        <span class="eyebrow">Creator Feedback</span>
-        <h2 class="section-title" style="font-size: clamp(24px, 3vw, 36px);">Reviews from scaling channels.</h2>
-      </div>
-    </div>
-
-    <div class="tmarquee reveal" id="quotes">
-      <!-- Testimonials marquee rows injected by JS -->
     </div>
   </div>
 </section>
 
-<!-- ============ SHOWCASE / PORTFOLIO (LONG FORM + SHORT FORM) ============ -->
-<section class="section section--alt" id="showcase">
+<!-- ============ METRICS & STATS ============ -->
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="stats-grid reveal-stagger">
+      <div class="stat-box">
+        <div class="stat__num" data-target="150" data-suffix="M+">0</div>
+        <div class="stat__label">Total Views Generated</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat__num" data-target="72" data-suffix="%">0</div>
+        <div class="stat__label">Average View Duration (AVD)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat__num" data-target="24" data-suffix="h">0</div>
+        <div class="stat__label">Average Project Turnaround</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat__num" data-target="99" data-suffix="%">0</div>
+        <div class="stat__label">Creator Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE / PORTFOLIO (Short & Long Form) ============ -->
+<section class="section" id="showcase">
   <div class="wrap">
     <div class="section-head section-head--split reveal">
       <div>
-        <span class="eyebrow">Selected Works</span>
-        <h2 class="section-title">Portfolio Showcase.<br/>Short Form &amp; Long Form.</h2>
+        <span class="eyebrow">Portfolio</span>
+        <h2 class="section-title">Selected Edits &amp; Timelines</h2>
       </div>
       <p class="section-lead">
-        Hand-crafted cuts built for algorithmic retention, rhythm, and watch time. Tap any project to inspect specs.
+        Explore recent work across gaming shorts, documentaries, talking heads, and viral vertical content.
       </p>
     </div>
 
-    <!-- Format Switcher (Short Form vs Long Form) -->
+    <!-- Format & Category Control Bar -->
     <div class="portfolio-format-bar reveal">
-      <div class="format-toggle">
-        <button class="format-btn is-active" id="format-short-btn" data-format="short">
-          <span class="format-btn__icon">⚡</span> Short Form (9:16)
-        </button>
-        <button class="format-btn" id="format-long-btn" data-format="long">
-          <span class="format-btn__icon">🎬</span> Long Form (16:9)
-        </button>
+      <div class="format-toggle" role="tablist" aria-label="Format Selector">
+        <button class="format-btn is-active" id="fmt-all" data-format="all">All Formats</button>
+        <button class="format-btn" id="fmt-short" data-format="short">⚡ Short Form (9:16)</button>
+        <button class="format-btn" id="fmt-long" data-format="long">🎬 Long Form (16:9)</button>
       </div>
 
-      <!-- Filter Pills -->
-      <div class="filter-pills" id="showcase-filters">
-        <!-- Injected dynamically based on format -->
+      <div class="filter-pills" id="category-filters">
+        <button class="filter-pill is-active" data-filter="all">All Niches</button>
+        <button class="filter-pill" data-filter="gaming">Gaming</button>
+        <button class="filter-pill" data-filter="talking-head">Talking Head</button>
+        <button class="filter-pill" data-filter="podcast">Podcast</button>
+        <button class="filter-pill" data-filter="documentary">Documentary</button>
       </div>
     </div>
 
+    <!-- Showcase Carousel -->
     <div class="carousel reveal">
-      <button class="carousel__arrow carousel__arrow--prev" id="car-prev" aria-label="Previous videos">‹</button>
-      <div class="showcase-grid" id="showcase-grid">
-        <!-- Video cards injected dynamically by JS -->
+      <button class="carousel__arrow carousel__arrow--prev" id="carousel-prev" aria-label="Previous edit">‹</button>
+      <div class="showcase-grid" id="showcase-container">
+        <!-- Rendered dynamically by main.js -->
       </div>
-      <button class="carousel__arrow carousel__arrow--next" id="car-next" aria-label="Next videos">›</button>
+      <button class="carousel__arrow carousel__arrow--next" id="carousel-next" aria-label="Next edit">›</button>
     </div>
   </div>
 </section>
 
-<!-- ============ THE PROCESS ============ -->
-<section class="section" id="process">
+<!-- ============ PROCESS SECTION (BENTO GRID) ============ -->
+<section class="section section--alt" id="process">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">The System</span>
-      <h2 class="section-title">A workflow engineered<br/>for algorithmic velocity.</h2>
+      <span class="eyebrow">Editing Workflow</span>
+      <h2 class="section-title">How Velaro Delivers Results</h2>
     </div>
 
     <div class="bento-grid reveal-stagger">
-      <article class="bento-card tilt-card">
-        <span class="bento-num">01 / AUDIT</span>
-        <h3>Footage Audit &amp; Hook Extraction</h3>
-        <p>We review your raw recording, identify the highest-energy spike, and restructure the opening seconds to eliminate viewer drop-off.</p>
-      </article>
-
-      <article class="bento-card tilt-card">
-        <span class="bento-num">02 / SOUNDSCAPE</span>
-        <h3>Layered Sound Design</h3>
-        <p>Custom whooshes, bass hits, riser transitions, and vocal leveling that elevate the subconscious rhythm of the edit.</p>
-      </article>
-
-      <article class="bento-card tilt-card">
-        <span class="bento-num">03 / MOTION</span>
-        <h3>Kinetic Graphics &amp; Dynamic Zooms</h3>
-        <p>Keyframed motion graphics, smooth zooms, and pattern interrupts timed to sustain viewer attention.</p>
-      </article>
-
-      <article class="bento-card tilt-card">
-        <span class="bento-num">04 / COLOR</span>
-        <h3>Color Correction &amp; Grading</h3>
-        <p>Contrast tuning, skin tone normalization, and rich color profiles calibrated specifically for modern displays.</p>
-      </article>
-
-      <article class="bento-card tilt-card">
-        <span class="bento-num">05 / REVISIONS</span>
-        <h3>Direct Revisions &amp; Polish</h3>
-        <p>Fast asynchronous feedback. We iterate quickly until the pacing and visual tone align with your vision.</p>
-      </article>
-
-      <article class="bento-card tilt-card">
-        <span class="bento-num">06 / VELOCITY</span>
-        <h3>24–48h Turnaround</h3>
-        <p>Full 4K ProRes exports delivered on a consistent schedule so your channel maintains continuous momentum.</p>
-      </article>
+      <div class="bento-card">
+        <span class="bento-num">01 / DISCOVERY</span>
+        <h3>Hook &amp; Retention Audit</h3>
+        <p>We analyze your footage and identify the strongest opening moments, key sound opportunities, and viral retention anchors.</p>
+      </div>
+      <div class="bento-card">
+        <span class="bento-num">02 / ASSEMBLY</span>
+        <h3>Pacing, SFX &amp; Motion</h3>
+        <p>Cutting dead air, structuring kinetic zooms, layering custom sound design, and building custom visual typography.</p>
+      </div>
+      <div class="bento-card">
+        <span class="bento-num">03 / MASTERY</span>
+        <h3>4K Export &amp; Delivery</h3>
+        <p>ProRes / 4K 60FPS color-graded timeline renders delivered within 24 to 48 hours directly to your cloud folder.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ PRICING ============ -->
-<section class="section section--alt" id="pricing">
+<!-- ============ PRICING SECTION ============ -->
+<section class="section" id="pricing">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Pricing</span>
-      <h2 class="section-title">Straightforward packages<br/>for scaling channels.</h2>
+      <span class="eyebrow">Transparent Packages</span>
+      <h2 class="section-title">Invest in Scalable Content</h2>
     </div>
 
     <div class="pricing-toggle reveal">
       <div class="toggle-switch">
-        <button class="toggle-btn is-active" id="tab-monthly">Monthly Retainer</button>
-        <button class="toggle-btn" id="tab-pervideo">Per Video Packages</button>
+        <button class="toggle-btn is-active" id="btn-monthly">Monthly Retainer</button>
+        <button class="toggle-btn" id="btn-per-video">Per Video</button>
       </div>
     </div>
 
-    <div class="pricing-grid reveal-stagger" id="pricing-container">
-      <!-- Monthly Packages injected dynamically -->
+    <div class="pricing-grid reveal-stagger">
+      <!-- Starter -->
+      <div class="price-card">
+        <div>
+          <h3 class="price-card__title">Starter Pack</h3>
+          <p class="price-card__sub">For creators publishing 2-3 times a week.</p>
+          <div class="price-card__price-row">
+            <div class="price-card__amount" id="price-starter"><span>$</span>599</div>
+            <div class="price-card__old" id="old-starter">$750</div>
+            <div class="price-card__save">20% OFF</div>
+          </div>
+          <ul class="price-card__features">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 12 Short-Form Edits / month</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 48h Turnaround</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Animated Subtitles &amp; SFX</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 2 Rounds of Revisions</li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn--dark btn--block btn--inert">Select Starter</button>
+      </div>
+
+      <!-- Growth (Featured) -->
+      <div class="price-card price-card--featured">
+        <div class="price-card__badge">MOST POPULAR</div>
+        <div>
+          <h3 class="price-card__title">Growth Engine</h3>
+          <p class="price-card__sub">Full short &amp; long form pipeline for scaling channels.</p>
+          <div class="price-card__price-row">
+            <div class="price-card__amount" id="price-growth"><span>$</span>1,199</div>
+            <div class="price-card__old" id="old-growth">$1,500</div>
+            <div class="price-card__save">20% OFF</div>
+          </div>
+          <ul class="price-card__features">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 20 Short-Form + 2 Long-Form Edits</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 24-48h Priority Turnaround</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Advanced 3D Zooms &amp; Motion FX</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Revisions</li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn--primary btn--block btn--inert">Select Growth</button>
+      </div>
+
+      <!-- Apex Studio -->
+      <div class="price-card">
+        <div>
+          <h3 class="price-card__title">Apex Studio</h3>
+          <p class="price-card__sub">Complete dedicated post-production department.</p>
+          <div class="price-card__price-row">
+            <div class="price-card__amount" id="price-apex"><span>$</span>2,399</div>
+            <div class="price-card__old" id="old-apex">$3,000</div>
+            <div class="price-card__save">20% OFF</div>
+          </div>
+          <ul class="price-card__features">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Shorts &amp; 6 Long-Form Edits</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 24h Express Turnaround</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Dedicated Lead Editor</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Custom Sound Mastering &amp; VFX</li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn--dark btn--block btn--inert">Select Apex</button>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ FAQ ============ -->
-<section class="section" id="faq">
+<!-- ============ FAQ SECTION ============ -->
+<section class="section section--alt" id="faq">
   <div class="wrap faq-wrap">
-    <div class="section-head section-head--left reveal">
+    <div class="reveal">
       <span class="eyebrow">FAQ</span>
-      <h2 class="section-title">Frequently asked<br/>questions.</h2>
-      <p class="section-lead" style="margin-top: 12px;">
-        Everything you need to know about our editing pipeline, formats, and delivery.
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p style="color: var(--ink-2); margin-top: 14px; font-size: 15px;">
+        Got questions about the workflow, footage delivery, or file specs? Here's how we operate.
       </p>
-      <div style="margin-top: 24px;">
-        <button type="button" class="btn btn--primary btn--inert">
-          Contact Studio <span aria-hidden="true">→</span>
-        </button>
-      </div>
     </div>
 
-    <div class="accordion reveal" id="accordion">
-      <div class="acc">
-        <button class="acc__q" aria-expanded="false">How fast is turnaround time?<span class="acc__ico" aria-hidden="true">+</span></button>
-        <div class="acc__a"><p>Standard delivery is 24–48 hours for short-form cuts, and 48–72 hours for full-length long-form YouTube episodes.</p></div>
-      </div>
+    <div class="accordion reveal-stagger">
       <div class="acc">
         <button class="acc__q" aria-expanded="false">Do you edit both Long Form &amp; Short Form videos?<span class="acc__ico" aria-hidden="true">+</span></button>
         <div class="acc__a"><p>Yes! We handle full long-form YouTube videos, documentaries, stream VOD cutdowns, and podcast episodes, as well as 9:16 vertical Shorts, TikToks, and Reels.</p></div>
@@ -406,7 +444,7 @@
       </div>
       <div class="acc">
         <button class="acc__q" aria-expanded="false">How do revisions work?<span class="acc__ico" aria-hidden="true">+</span></button>
-        <div class="acc__a"><p>We offer unlimited revisions on our Creator and Apex packages to make sure each cut meets your performance expectations.</p></div>
+        <div class="acc__a"><p>We offer unlimited revisions on our Growth and Apex packages to make sure each cut meets your performance expectations.</p></div>
       </div>
       <div class="acc">
         <button class="acc__q" aria-expanded="false">Are subtitles, audio mixing, and zooms included?<span class="acc__ico" aria-hidden="true">+</span></button>
@@ -420,7 +458,7 @@
 <section class="cta-banner" id="contact">
   <div class="wrap">
     <div class="cta-banner__card reveal">
-      <h2 class="cta__title">Ready to scale your content with <span class="text-red">Pro Panda</span>?</h2>
+      <h2 class="cta__title">Ready to scale your content with <span class="text-gold">Velaro</span>?</h2>
       <p class="cta__sub">
         Let's build a consistent high-retention video pipeline that converts casual viewers into subscribers.
       </p>
@@ -443,11 +481,11 @@
   <div class="wrap">
     <div class="footer__grid">
       <div class="footer__brand">
-        <a href="#home" class="brand">
-          <div class="brand__logo-box">
-            <img src="logo.png" alt="Pro Panda" class="brand__mark" />
+        <a href="#home" class="brand-capsule" style="display:inline-flex; margin-bottom: 8px;">
+          <div class="brand-capsule__logo" style="width:28px; height:28px;">
+            <img src="logo.png" alt="Velaro" class="brand__mark" />
           </div>
-          <span>Pro <span class="text-red">Panda</span></span>
+          <span style="font-weight:700; font-size:16px; margin-left:8px;">Velaro</span>
         </a>
         <p>
           High-retention short-form and long-form video editing studio for creators, gaming channels, and brands.
@@ -473,7 +511,7 @@
     </div>
 
     <div class="footer__bar">
-      <span>© 2026 Pro Panda Studio. All rights reserved.</span>
+      <span>© 2026 Velaro Studio. All rights reserved.</span>
       <span>Engineered for Maximum Retention.</span>
     </div>
   </div>
