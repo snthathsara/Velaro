@@ -448,17 +448,21 @@
   });
 
   /* ============================================================
-     11. VERIFIED VITRINE CLIENT REVIEWS
+     11. VERIFIED CREATOR CLIENT REVIEWS
      ============================================================ */
-  const DEFAULT_VITRINE_QUOTES = [
-    { text: "Nice edits, fast worker, very good service.", name: "LemonGuy_2070", role: "Brand Owner", ava: "🍋", stars: 5 },
-    { text: "Nice edits, fast worker — would recommend him 100%.", name: "Bullo Producer", role: "Content Creator", ava: "🎵", stars: 5 },
-    { text: "Perfectly did my edit as I expected, great work. Would recommend to anyone looking for an editor.", name: "Carl J.", role: "Podcaster", ava: "🎙️", stars: 5 },
-    { text: "Perfect videos, fast edits, and high retention / sub conversion.", name: "Matty", role: "Content Creator", ava: "🚀", stars: 5 },
-    { text: "Edited a step-by-step cooking video for me. Great service, fast edits.", name: "Yeesh_24", role: "Creator", ava: "👨‍🍳", stars: 5 },
-    { text: "Very good edit — bro cooked, for real.", name: "Pibbs", role: "Gaming Creator", ava: "🎮", stars: 5 },
-    { text: "Needed captions and effects added — clean, fast, done in under an hour with everything I needed.", name: "LMGX", role: "Content Creator", ava: "🎬", stars: 5 },
-    { text: "High quality edit finished in about five minutes. Clean, professional and seriously fast.", name: "Morgan", role: "Content Creator", ava: "⚡", stars: 5 }
+  const DEFAULT_CREATOR_QUOTES = [
+    { text: "Velaro completely transformed our workflow. The retention and pacing on every edit helped our videos regularly break 1M+ views.", name: "Sunny and Melon", role: "3.01M Subs · Animation", ava: "assets/creators/sunnyandmelon.png", stars: 5 },
+    { text: "Insanely sharp cuts, hilarious audio timing, and unmatched turnaround speed. The best post-production studio on YouTube.", name: "RoRants", role: "1.62M Subs · Commentary", ava: "assets/creators/rorants.png", stars: 5 },
+    { text: "Average view duration jumped from 48% to 76% on our uploads. Sound design and kinetic typography are second to none.", name: "Jamesy", role: "474K Subs · Gaming & Shorts", ava: "assets/creators/jamesy.png", stars: 5 },
+    { text: "From raw gameplay to a polished high-octane video in under 24 hours. Velaro has been our secret growth weapon.", name: "GamesTried", role: "386K Subs · Gaming Showcase", ava: "assets/creators/gamestried.png", stars: 5 },
+    { text: "Every single video comes back clean, dynamic, and viral-ready. Revisions are almost never needed.", name: "Misty", role: "139K Subs · Roblox", ava: "assets/creators/misty.png", stars: 5 },
+    { text: "Insane sound effects, smooth keyframe zooms, and flawless meme execution. Bro literally cooks on every timeline.", name: "DonaldDucc Gaming", role: "120K Subs · Gaming Memes", ava: "assets/creators/donaldducc.png", stars: 5 },
+    { text: "Pacing is super fast and engaging for younger audiences. Conversion from viewers to subscribers went up dramatically.", name: "CrazyGifter", role: "109K Subs · Entertainment", ava: "assets/creators/crazygifter.png", stars: 5 },
+    { text: "Turnaround time is unmatched and the visual hook in the first 5 seconds keeps our retention sky high.", name: "Kingg", role: "98K Subs · Stream Highlights", ava: "assets/creators/kingg.png", stars: 5 },
+    { text: "Clean cuts, perfect music sync, and pro color grading. Highly recommend Velaro to any creator looking to scale.", name: "r0aR", role: "29.5K Subs · Content Creator", ava: "assets/creators/r0ar.png", stars: 5 },
+    { text: "Transformed our raw recordings into scroll-stopping YouTube Shorts. Super reliable delivery schedule.", name: "Camel27", role: "16.2K Subs · Gaming Shorts", ava: "assets/creators/camel27.png", stars: 5 },
+    { text: "Top-tier editing quality with tight sound mastering and clean motion graphics on every project.", name: "Monotone", role: "9.46K Subs · Minecraft", ava: "assets/creators/monotone.png", stars: 5 },
+    { text: "Seamless communication and high production value. Velaro makes every video look like a high-budget studio cut.", name: "Tropical Paradox", role: "4.08K Subs · Creator Channel", ava: "assets/creators/tropicalparadox.png", stars: 5 }
   ];
 
   function renderTestimonials(quotes) {
@@ -467,28 +471,34 @@
     const mid = Math.ceil(quotes.length / 2);
     const row1 = quotes.slice(0, mid);
     const row2 = quotes.slice(mid);
-    const qCard = (q) => `
-      <blockquote class="tquote">
-        <div class="quote__stars" aria-label="5 stars">★★★★★</div>
-        <p class="quote__text">"${q.text}"</p>
-        <div class="quote__who">
-          <span class="quote__ava" aria-hidden="true">${q.ava || '⭐'}</span>
-          <div>
-            <div class="quote__name">${q.name}</div>
-            <div class="quote__role">${q.role}</div>
+    const qCard = (q) => {
+      const isImg = q.ava && (q.ava.includes("/") || q.ava.includes("."));
+      const avatarHtml = isImg 
+        ? `<img src="${q.ava}" alt="${q.name}" class="quote__ava" />`
+        : `<span class="quote__ava" aria-hidden="true">${q.ava || '⭐'}</span>`;
+      return `
+        <blockquote class="tquote">
+          <div class="quote__stars" aria-label="5 stars">★★★★★</div>
+          <p class="quote__text">"${q.text}"</p>
+          <div class="quote__who">
+            ${avatarHtml}
+            <div>
+              <div class="quote__name">${q.name}</div>
+              <div class="quote__role">${q.role}</div>
+            </div>
           </div>
-        </div>
-      </blockquote>
-    `;
+        </blockquote>
+      `;
+    };
     cont.innerHTML = `
-      <div class="tmarquee__row tmarquee__row--a">${[...row1, ...row1, ...row1].map(qCard).join("")}</div>
-      <div class="tmarquee__row tmarquee__row--b">${[...row2, ...row2, ...row2].map(qCard).join("")}</div>
+      <div class="tmarquee__row tmarquee__row--a">${[...row1, ...row1].map(qCard).join("")}</div>
+      <div class="tmarquee__row tmarquee__row--b">${[...row2, ...row2].map(qCard).join("")}</div>
     `;
   }
 
-  let currentQuotes = DEFAULT_VITRINE_QUOTES;
+  let currentQuotes = DEFAULT_CREATOR_QUOTES;
   try {
-    const savedQ = localStorage.getItem("velaro_testimonials_data") || localStorage.getItem("propanda_testimonials_data");
+    const savedQ = localStorage.getItem("velaro_testimonials_data");
     if (savedQ) {
       const parsed = JSON.parse(savedQ);
       if (Array.isArray(parsed) && parsed.length) currentQuotes = parsed;
