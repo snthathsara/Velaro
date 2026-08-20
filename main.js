@@ -222,7 +222,7 @@
   $$(".reveal, .reveal-stagger").forEach((el) => io.observe(el));
 
   /* ============================================================
-     8. 3D CARD TILT ANIMATION
+     8. 3D CARD TILT & DYNAMIC GLASS SPECULAR GLARE
      ============================================================ */
   if (!reduce && matchMedia("(hover: hover)").matches) {
     $$(".tilt-card").forEach((card) => {
@@ -232,9 +232,11 @@
         const y = e.clientY - rect.top;
         const cx = rect.width / 2;
         const cy = rect.height / 2;
-        const rotX = ((y - cy) / cy) * -4;
-        const rotY = ((x - cx) / cx) * 4;
-        card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-2px)`;
+        const rotX = ((y - cy) / cy) * -5;
+        const rotY = ((x - cx) / cx) * 5;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+        card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
       });
       card.addEventListener("mouseleave", () => {
         card.style.transform = "";
