@@ -301,6 +301,44 @@
     border-radius: var(--radius); padding: 30px; width: 100%; max-width: 520px;
     box-shadow: 0 30px 80px rgba(0,0,0,0.7);
   }
+
+  /* Lock Notice & Locked State */
+  .lock-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+  }
+  .lock-banner__icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .lock-banner__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 2px;
+  }
+  .lock-banner__desc {
+    font-size: 12.5px;
+    color: #a1a1aa;
+    line-height: 1.4;
+    margin: 0;
+  }
+  .is-locked-btn {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+  .is-locked-input {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
 </style>
 </head>
 <body>
@@ -512,59 +550,83 @@
       <button class="btn btn--primary js-save-btn">Save Branding Changes 🚀</button>
     </div>
 
-    <!-- TAB 4: VIDEOS -->
+    <!-- TAB 4: VIDEOS (LOCKED) -->
     <div class="tab-pane" id="tab-videos">
+      <div class="lock-banner">
+        <div class="lock-banner__icon">🔒</div>
+        <div>
+          <div class="lock-banner__title">Video Management Module Locked</div>
+          <p class="lock-banner__desc">Adding, editing, and deleting showcase projects is locked pending developer clearance. Live site projects remain active.</p>
+        </div>
+      </div>
+
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
           <h2 class="auth-title" style="font-size: 22px; margin: 0;">Showcase Videos</h2>
-          <p class="auth-sub" style="margin: 4px 0 0;">Add, edit, or remove YouTube edits from the portfolio showcase.</p>
+          <p class="auth-sub" style="margin: 4px 0 0;">Portfolio video library (Read-Only).</p>
         </div>
-        <button class="btn btn--secondary" id="add-video-btn">+ Add Video</button>
+        <button class="btn btn--secondary is-locked-btn" id="add-video-btn" title="Locked by Developer">🔒 + Add Video</button>
       </div>
 
       <div class="list-stack" id="videos-list">
-        <!-- Rendered by JS -->
+        <!-- Rendered by JS with disabled action buttons -->
       </div>
 
       <div style="display: flex; gap: 12px; margin-top: 20px;">
-        <button class="btn btn--primary js-save-btn">Save All Videos 🚀</button>
-        <button class="btn btn--secondary" id="reset-videos-btn" style="white-space: nowrap;">Reset Defaults</button>
+        <button class="btn btn--primary js-save-btn is-locked-btn" disabled>Save All Videos 🔒</button>
+        <button class="btn btn--secondary is-locked-btn" id="reset-videos-btn" style="white-space: nowrap;" disabled>Reset Defaults</button>
       </div>
     </div>
 
-    <!-- TAB 5: REVIEWS -->
+    <!-- TAB 5: REVIEWS (LOCKED) -->
     <div class="tab-pane" id="tab-reviews">
+      <div class="lock-banner">
+        <div class="lock-banner__icon">🔒</div>
+        <div>
+          <div class="lock-banner__title">Reviews Module Locked</div>
+          <p class="lock-banner__desc">Adding, editing, and deleting client reviews is locked pending developer clearance. Verified testimonials remain active.</p>
+        </div>
+      </div>
+
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
           <h2 class="auth-title" style="font-size: 22px; margin: 0;">Creator Reviews</h2>
-          <p class="auth-sub" style="margin: 4px 0 0;">Customize creator testimonials shown in the infinite marquee.</p>
+          <p class="auth-sub" style="margin: 4px 0 0;">Client testimonials library (Read-Only).</p>
         </div>
-        <button class="btn btn--secondary" id="add-review-btn">+ Add Review</button>
+        <button class="btn btn--secondary is-locked-btn" id="add-review-btn" title="Locked by Developer">🔒 + Add Review</button>
       </div>
 
       <div class="list-stack" id="reviews-list">
-        <!-- Rendered by JS -->
+        <!-- Rendered by JS with disabled action buttons -->
       </div>
 
       <div style="display: flex; gap: 12px; margin-top: 20px;">
-        <button class="btn btn--primary js-save-btn">Save All Reviews 🚀</button>
-        <button class="btn btn--secondary" id="reset-reviews-btn" style="white-space: nowrap;">Reset Defaults</button>
+        <button class="btn btn--primary js-save-btn is-locked-btn" disabled>Save All Reviews 🔒</button>
+        <button class="btn btn--secondary is-locked-btn" id="reset-reviews-btn" style="white-space: nowrap;" disabled>Reset Defaults</button>
       </div>
     </div>
 
-    <!-- TAB 6: SETTINGS -->
+    <!-- TAB 6: SETTINGS (LOCKED) -->
     <div class="tab-pane" id="tab-settings">
+      <div class="lock-banner">
+        <div class="lock-banner__icon">🔒</div>
+        <div>
+          <div class="lock-banner__title">Security Configuration Locked</div>
+          <p class="lock-banner__desc">PIN modification is locked by the developer until final project release.</p>
+        </div>
+      </div>
+
       <div style="margin-bottom: 20px;">
-        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Security PIN &amp; Backup</h2>
-        <p class="auth-sub" style="margin: 4px 0 0;">Update your security PIN or manage cloud configurations.</p>
+        <h2 class="auth-title" style="font-size: 22px; margin: 0;">Security PIN &amp; Access</h2>
+        <p class="auth-sub" style="margin: 4px 0 0;">Studio security access controls.</p>
       </div>
 
       <div class="input-group">
-        <label class="input-label" for="custom-pin-input">Change Security PIN</label>
-        <input type="password" id="custom-pin-input" class="input-field" placeholder="Enter new 4-digit PIN (e.g. 1111)" />
+        <label class="input-label" for="custom-pin-input">Change Security PIN (Locked)</label>
+        <input type="password" id="custom-pin-input" class="input-field is-locked-input" placeholder="•••• (PIN Modification Locked)" disabled />
       </div>
 
-      <button class="btn btn--primary js-save-btn">Save Settings 🚀</button>
+      <button class="btn btn--primary is-locked-btn" disabled>Save Settings 🔒</button>
     </div>
   </section>
 </div>
@@ -888,6 +950,9 @@
   const resetLogoBtn = document.getElementById("reset-logo-btn");
   if (resetLogoBtn) resetLogoBtn.addEventListener("click", () => setLogo("logo.png"));
 
+  // Developer Module Lock (Set to false to unlock upon payment clearance)
+  const ADMIN_LOCKED_MODULES = true;
+
   // Video Management
   const videosList = document.getElementById("videos-list");
   const videoModal = document.getElementById("video-modal");
@@ -907,22 +972,24 @@
           <div class="item-sub">${v.tag || 'General'} · ID: ${v.id || 'sample'}</div>
         </div>
         <div class="item-actions">
-          <button type="button" class="btn btn--secondary btn-edit-video" data-idx="${i}">Edit</button>
-          <button type="button" class="btn btn--danger btn-del-video" data-idx="${i}">Delete</button>
+          <button type="button" class="btn btn--secondary ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-edit-video'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Edit' : 'Edit'}</button>
+          <button type="button" class="btn btn--danger ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-del-video'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Delete' : 'Delete'}</button>
         </div>
       </div>
     `).join("");
 
-    document.querySelectorAll(".btn-edit-video").forEach((b) => {
-      b.addEventListener("click", () => openVideoModal(+b.dataset.idx));
-    });
-    document.querySelectorAll(".btn-del-video").forEach((b) => {
-      b.addEventListener("click", () => {
-        currentVideos.splice(+b.dataset.idx, 1);
-        renderVideoList();
-        saveAllData();
+    if (!ADMIN_LOCKED_MODULES) {
+      document.querySelectorAll(".btn-edit-video").forEach((b) => {
+        b.addEventListener("click", () => openVideoModal(+b.dataset.idx));
       });
-    });
+      document.querySelectorAll(".btn-del-video").forEach((b) => {
+        b.addEventListener("click", () => {
+          currentVideos.splice(+b.dataset.idx, 1);
+          renderVideoList();
+          saveAllData();
+        });
+      });
+    }
   }
 
   function parseYouTubeId(input) {
@@ -931,6 +998,7 @@
   }
 
   function openVideoModal(idx = -1) {
+    if (ADMIN_LOCKED_MODULES) return;
     if (!videoModal) return;
     vIndex.value = idx;
     if (idx >= 0) {
@@ -949,11 +1017,11 @@
   }
 
   const addVideoBtn = document.getElementById("add-video-btn");
-  if (addVideoBtn) addVideoBtn.addEventListener("click", () => openVideoModal(-1));
+  if (addVideoBtn && !ADMIN_LOCKED_MODULES) addVideoBtn.addEventListener("click", () => openVideoModal(-1));
   const closeVideoModalBtn = document.getElementById("close-video-modal");
   if (closeVideoModalBtn && videoModal) closeVideoModalBtn.addEventListener("click", () => videoModal.classList.remove("is-open"));
 
-  if (videoForm) {
+  if (videoForm && !ADMIN_LOCKED_MODULES) {
     videoForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const id = parseYouTubeId(vId.value);
@@ -972,7 +1040,7 @@
   }
 
   const resetVideosBtn = document.getElementById("reset-videos-btn");
-  if (resetVideosBtn) {
+  if (resetVideosBtn && !ADMIN_LOCKED_MODULES) {
     resetVideosBtn.addEventListener("click", () => {
       currentVideos = [...DEFAULT_VIDEOS];
       renderVideoList();
@@ -1000,25 +1068,28 @@
           <div class="item-sub">"${r.text}"</div>
         </div>
         <div class="item-actions">
-          <button type="button" class="btn btn--secondary btn-edit-review" data-idx="${i}">Edit</button>
-          <button type="button" class="btn btn--danger btn-del-review" data-idx="${i}">Delete</button>
+          <button type="button" class="btn btn--secondary ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-edit-review'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Edit' : 'Edit'}</button>
+          <button type="button" class="btn btn--danger ${ADMIN_LOCKED_MODULES ? 'is-locked-btn' : 'btn-del-review'}" data-idx="${i}" ${ADMIN_LOCKED_MODULES ? 'disabled' : ''}>${ADMIN_LOCKED_MODULES ? '🔒 Delete' : 'Delete'}</button>
         </div>
       </div>
     `).join("");
 
-    document.querySelectorAll(".btn-edit-review").forEach((b) => {
-      b.addEventListener("click", () => openReviewModal(+b.dataset.idx));
-    });
-    document.querySelectorAll(".btn-del-review").forEach((b) => {
-      b.addEventListener("click", () => {
-        currentReviews.splice(+b.dataset.idx, 1);
-        renderReviewList();
-        saveAllData();
+    if (!ADMIN_LOCKED_MODULES) {
+      document.querySelectorAll(".btn-edit-review").forEach((b) => {
+        b.addEventListener("click", () => openReviewModal(+b.dataset.idx));
       });
-    });
+      document.querySelectorAll(".btn-del-review").forEach((b) => {
+        b.addEventListener("click", () => {
+          currentReviews.splice(+b.dataset.idx, 1);
+          renderReviewList();
+          saveAllData();
+        });
+      });
+    }
   }
 
   function openReviewModal(idx = -1) {
+    if (ADMIN_LOCKED_MODULES) return;
     if (!reviewModal) return;
     rIndex.value = idx;
     if (idx >= 0) {
@@ -1039,11 +1110,11 @@
   }
 
   const addReviewBtn = document.getElementById("add-review-btn");
-  if (addReviewBtn) addReviewBtn.addEventListener("click", () => openReviewModal(-1));
+  if (addReviewBtn && !ADMIN_LOCKED_MODULES) addReviewBtn.addEventListener("click", () => openReviewModal(-1));
   const closeReviewModalBtn = document.getElementById("close-review-modal");
   if (closeReviewModalBtn && reviewModal) closeReviewModalBtn.addEventListener("click", () => reviewModal.classList.remove("is-open"));
 
-  if (reviewForm) {
+  if (reviewForm && !ADMIN_LOCKED_MODULES) {
     reviewForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const text = rText.value.trim();
@@ -1063,7 +1134,7 @@
   }
 
   const resetReviewsBtn = document.getElementById("reset-reviews-btn");
-  if (resetReviewsBtn) {
+  if (resetReviewsBtn && !ADMIN_LOCKED_MODULES) {
     resetReviewsBtn.addEventListener("click", () => {
       currentReviews = [...DEFAULT_QUOTES];
       renderReviewList();
@@ -1087,18 +1158,20 @@
     localStorage.setItem("propanda_logo_url", currentLogo);
     localStorage.setItem("flow_logo_url", currentLogo);
 
-    localStorage.setItem("propanda_videos_data", JSON.stringify(currentVideos));
-    localStorage.setItem("flow_videos_data", JSON.stringify(currentVideos));
+    if (!ADMIN_LOCKED_MODULES) {
+      localStorage.setItem("propanda_videos_data", JSON.stringify(currentVideos));
+      localStorage.setItem("flow_videos_data", JSON.stringify(currentVideos));
 
-    localStorage.setItem("propanda_testimonials_data", JSON.stringify(currentReviews));
-    localStorage.setItem("flow_testimonials_data", JSON.stringify(currentReviews));
+      localStorage.setItem("propanda_testimonials_data", JSON.stringify(currentReviews));
+      localStorage.setItem("flow_testimonials_data", JSON.stringify(currentReviews));
 
-    const customPinEl = document.getElementById("custom-pin-input");
-    if (customPinEl) {
-      const newPin = customPinEl.value.trim();
-      if (newPin && newPin.length >= 4) {
-        localStorage.setItem("propanda_custom_pin", newPin);
-        localStorage.setItem("flow_custom_pin", newPin);
+      const customPinEl = document.getElementById("custom-pin-input");
+      if (customPinEl && !customPinEl.disabled) {
+        const newPin = customPinEl.value.trim();
+        if (newPin && newPin.length >= 4) {
+          localStorage.setItem("propanda_custom_pin", newPin);
+          localStorage.setItem("flow_custom_pin", newPin);
+        }
       }
     }
 
@@ -1108,7 +1181,7 @@
     }
   }
 
-  document.querySelectorAll(".js-save-btn").forEach((b) => b.addEventListener("click", saveAllData));
+  document.querySelectorAll(".js-save-btn:not(.is-locked-btn)").forEach((b) => b.addEventListener("click", saveAllData));
 })();
 </script>
 </body>
